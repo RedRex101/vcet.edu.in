@@ -89,7 +89,7 @@ const menuGroups: MenuGroup[] = [
         ],
       },
       { label: 'Teaching Learning Process',  href: 'https://vcet.edu.in/teaching-learning-proccess/' },
-      { label: 'Swayam â€“ NPTEL',             href: 'https://vcet.edu.in/swayam-nptel/' },
+      { label: 'Swayam - NPTEL',             href: 'https://vcet.edu.in/swayam-nptel/' },
       {
         label: 'Honours / Minor Degree Program',
         subItems: [
@@ -213,7 +213,7 @@ const menuGroups: MenuGroup[] = [
 
   // 12. TRAINING & PLACEMENT
   {
-    label: 'T & P',
+    label: 'Training & Placemnet',
     dropdown: [
       { label: 'Placement', href: '#placements' },
       { label: 'Training',  href: 'https://vcet.edu.in/training/' },
@@ -229,45 +229,79 @@ const menuGroups: MenuGroup[] = [
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 interface DesktopDropdownItemProps {
   item: DropdownItem;
+  /** flip sub-panel to left when parent dropdown is near right edge */
+  flipSub?: boolean;
 }
-const DesktopDropdownItem: React.FC<DesktopDropdownItemProps> = ({ item }) => {
-  const [open, setOpen] = useState(false);
+const DesktopDropdownItem: React.FC<DesktopDropdownItemProps> = ({ item, flipSub }) => {
+  const [subOpen, setSubOpen] = useState(false);
+  const subTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const openSub  = () => { if (subTimer.current) clearTimeout(subTimer.current); setSubOpen(true); };
+  const closeSub = () => { subTimer.current = setTimeout(() => setSubOpen(false), 200); };
+  const keepSub  = () => { if (subTimer.current) clearTimeout(subTimer.current); };
+
+  /* ── Section divider label (e.g. "Extra-Curricular") ── */
   if (item.isGroupLabel) {
     return (
-      <div className="px-4 pt-3 pb-1">
-        <span className="text-[9px] font-black uppercase tracking-[0.18em] text-brand-gold/80 select-none">
+      <div className="px-4 pt-3 pb-1.5">
+        <span className="text-[8.5px] font-black uppercase tracking-[0.2em] text-brand-gold select-none">
           {item.label}
         </span>
+        <div className="mt-1 h-px bg-brand-gold/20" />
       </div>
     );
   }
 
+  /* ── Item with sub-items → hover flyout panel to the right ── */
   if (item.subItems && item.subItems.length > 0) {
+    const subSide = flipSub ? 'right-full mr-1' : 'left-full ml-1';
     return (
-      <div>
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-2.5 text-[11px] font-semibold text-slate-600 hover:text-brand-blue hover:bg-brand-blue/5 transition-all duration-200 border-l-2 border-transparent hover:border-brand-gold"
-        >
-          <span>{item.label}</span>
+      <div
+        className="relative"
+        onMouseEnter={openSub}
+        onMouseLeave={closeSub}
+      >
+        {/* Trigger row */}
+        <div className={`flex items-center justify-between px-4 py-2.5 cursor-pointer select-none transition-all duration-150 border-l-2 ${
+          subOpen
+            ? 'bg-brand-blue/8 text-brand-blue border-brand-blue'
+            : 'text-slate-700 hover:text-brand-blue hover:bg-brand-blue/5 border-transparent hover:border-brand-gold'
+        }`}>
+          <span className="text-[11.5px] font-semibold">{item.label}</span>
           <ChevronRight
-            className={`w-3.5 h-3.5 flex-shrink-0 text-brand-gold/60 transition-transform duration-300 ${open ? 'rotate-90' : ''}`}
+            className={`w-3.5 h-3.5 flex-shrink-0 ml-3 transition-all duration-250 ${
+              subOpen ? 'text-brand-blue translate-x-1' : 'text-brand-gold/50'
+            }`}
           />
-        </button>
+        </div>
+
+        {/* Sub-flyout panel */}
         <div
-          className="overflow-hidden transition-all duration-300 ease-in-out"
-          style={{ maxHeight: open ? `${item.subItems.length * 44}px` : '0px' }}
+          onMouseEnter={keepSub}
+          onMouseLeave={closeSub}
+          className={`absolute top-0 ${subSide} z-[400] transition-all duration-250 ease-[cubic-bezier(0.34,1.18,0.64,1)] origin-left ${
+            subOpen
+              ? 'opacity-100 translate-x-0 pointer-events-auto'
+              : 'opacity-0 -translate-x-2 pointer-events-none'
+          }`}
         >
-          <div className="bg-slate-50/80 border-l-2 border-brand-gold/30 ml-4 mb-1">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 min-w-[240px] py-2 ring-1 ring-black/5">
+            {/* Sub-panel header */}
+            <div className="px-4 pb-1.5 pt-1">
+              <span className="text-[8.5px] font-black uppercase tracking-[0.2em] text-brand-blue/50">
+                {item.label}
+              </span>
+            </div>
+            <div className="h-px bg-gray-100 mx-3 mb-1" />
             {item.subItems.map((sub) => (
               <a
                 key={sub.label}
                 href={sub.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block px-4 py-2 text-[10.5px] text-slate-500 hover:text-brand-blue hover:bg-brand-blue/5 transition-colors duration-150"
+                className="flex items-center gap-2.5 px-4 py-2.5 text-[11.5px] text-slate-600 hover:text-brand-blue hover:bg-brand-blue/5 transition-all duration-150 border-l-2 border-transparent hover:border-brand-gold group"
               >
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/40 flex-shrink-0 group-hover:bg-brand-blue transition-colors duration-150" />
                 {sub.label}
               </a>
             ))}
@@ -277,12 +311,13 @@ const DesktopDropdownItem: React.FC<DesktopDropdownItemProps> = ({ item }) => {
     );
   }
 
+  /* ── Plain link ── */
   return (
     <a
       href={item.href}
       target={item.href?.startsWith('http') ? '_blank' : '_self'}
       rel="noopener noreferrer"
-      className="block px-4 py-2.5 text-[11px] font-semibold text-slate-600 hover:text-brand-blue hover:bg-brand-blue/5 transition-all duration-200 border-l-2 border-transparent hover:border-brand-gold"
+      className="block px-4 py-2.5 text-[11.5px] font-semibold text-slate-700 hover:text-brand-blue hover:bg-brand-blue/5 transition-all duration-150 border-l-2 border-transparent hover:border-brand-gold"
     >
       {item.label}
     </a>
@@ -363,18 +398,10 @@ const MobileAccordionItem: React.FC<MobileAccordionItemProps> = ({ item, onClose
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen]         = useState(false);
   const [searchOpen, setSearchOpen]         = useState(false);
-  const [scrolled, setScrolled]             = useState(false);
   const [activeMenu, setActiveMenu]         = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const searchInputRef                      = useRef<HTMLInputElement>(null);
   const closeTimer                          = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /* scroll detection */
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
 
   /* body scroll lock */
   useEffect(() => {
@@ -400,15 +427,19 @@ const Header: React.FC = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
   }, []);
 
-  /* Last 4 items align dropdown to the right so they stay in viewport */
+  /* Last 5 items right-align their dropdown so it stays inside viewport */
   const getDropdownAlign = (idx: number) =>
-    idx >= menuGroups.length - 4 ? 'right-0' : 'left-0';
+    idx >= menuGroups.length - 5 ? 'right-0' : 'left-0';
 
-  /* Estimate dropdown panel height for smooth animation */
+  /* Sub-flyout flips left when the parent dropdown is near the right edge */
+  const shouldFlipSub = (idx: number) =>
+    idx >= menuGroups.length - 5;
+
+  /* Estimate max-height for smooth dropdown animation */
   const getDropdownMaxH = (items: DropdownItem[]) => {
-    let h = items.reduce((acc, it) => {
-      if (it.isGroupLabel) return acc + 30;
-      if (it.subItems) return acc + 44;
+    const h = items.reduce((acc, it) => {
+      if (it.isGroupLabel) return acc + 34;
+      if (it.subItems)     return acc + 44;
       return acc + 40;
     }, 16);
     return Math.min(h, 520);
@@ -417,28 +448,14 @@ const Header: React.FC = () => {
   return (
     <>
       {/* â”€â”€â”€â”€â”€â”€â”€â”€ STICKY HEADER â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <header
-        className={`sticky top-0 w-full z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-white/97 backdrop-blur-md shadow-[0_2px_12px_rgba(0,0,0,0.09)] border-b border-gray-100'
-            : 'bg-transparent'
-        }`}
-      >
-        <div
-          className={`container mx-auto px-3 sm:px-4 h-14 md:h-[4.2rem] flex items-center gap-1.5 transition-colors duration-500 ${
-            scrolled ? 'text-brand-blue' : 'text-white'
-          }`}
-        >
-          {/* Logo â€” visible only when scrolled */}
-          <a href="#home" className="flex-shrink-0">
+      <header className="sticky top-0 w-full z-50 bg-white shadow-[0_2px_16px_rgba(0,0,0,0.08)] border-b border-gray-100">
+        <div className="container mx-auto px-3 sm:px-4 h-14 md:h-[4.2rem] flex items-center gap-2">
+          {/* Logo */}
+          <a href="#home" className="flex-shrink-0 mr-1">
             <img
               src="/Images/VCET%20logo.jpeg"
               alt="VCET Logo"
-              className={`w-auto rounded-sm transition-all duration-500 ${
-                scrolled
-                  ? 'h-10 md:h-11 opacity-100 pointer-events-auto'
-                  : 'h-0 w-0 opacity-0 pointer-events-none overflow-hidden'
-              }`}
+              className="h-10 md:h-11 w-auto rounded-sm"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </a>
@@ -458,20 +475,16 @@ const Header: React.FC = () => {
                         onBlur={scheduleClose}
                         aria-haspopup="true"
                         aria-expanded={activeMenu === group.label}
-                        className={`flex items-center gap-0.5 px-[5px] xl:px-2 py-2 text-[8px] xl:text-[9px] 2xl:text-[10px] font-bold uppercase tracking-wide rounded transition-all duration-250 whitespace-nowrap select-none ${
+                        className={`flex items-center gap-0.5 px-[5px] xl:px-[7px] py-2 text-[8px] xl:text-[9px] 2xl:text-[10px] font-bold uppercase tracking-wide rounded-md transition-all duration-200 whitespace-nowrap select-none ${
                           activeMenu === group.label
-                            ? scrolled
-                              ? 'bg-brand-blue/8 text-brand-blue'
-                              : 'bg-white/15 text-white'
-                            : scrolled
-                            ? 'hover:bg-brand-blue/6 hover:text-brand-blue'
-                            : 'hover:bg-white/12'
+                            ? 'bg-brand-blue text-white'
+                            : 'text-slate-700 hover:bg-brand-blue/8 hover:text-brand-blue'
                         }`}
                       >
                         {group.label}
                         <ChevronDown
-                          className={`w-2.5 h-2.5 flex-shrink-0 opacity-50 transition-transform duration-300 ${
-                            activeMenu === group.label ? 'rotate-180' : ''
+                          className={`w-2.5 h-2.5 flex-shrink-0 transition-transform duration-300 ${
+                            activeMenu === group.label ? 'rotate-180 opacity-100' : 'opacity-40'
                           }`}
                         />
                       </button>
@@ -481,18 +494,18 @@ const Header: React.FC = () => {
                         onMouseEnter={cancelClose}
                         onMouseLeave={scheduleClose}
                         style={{ zIndex: 300 }}
-                        className={`absolute top-full mt-1.5 ${getDropdownAlign(idx)} transition-all duration-300 ease-[cubic-bezier(0.34,1.26,0.64,1)] origin-top ${
+                        className={`absolute top-full pt-2 ${getDropdownAlign(idx)} transition-all duration-300 ease-[cubic-bezier(0.34,1.18,0.64,1)] origin-top ${
                           activeMenu === group.label
                             ? 'opacity-100 scale-y-100 translate-y-0 pointer-events-auto'
                             : 'opacity-0 scale-y-90 -translate-y-2 pointer-events-none'
                         }`}
                       >
                         <div
-                          className="bg-white rounded-xl shadow-2xl border border-gray-100/90 min-w-[230px] max-w-[295px] overflow-y-auto py-2 ring-1 ring-black/5"
-                          style={{ maxHeight: `${getDropdownMaxH(group.dropdown)}px` }}
+                          className="relative bg-white rounded-xl shadow-2xl border border-gray-100/90 min-w-[230px] max-w-[295px] overflow-y-auto py-2 ring-1 ring-black/5"
+                          style={{ maxHeight: `${getDropdownMaxH(group.dropdown)}px`, zIndex: 2 }}
                         >
                           {group.dropdown.map((item) => (
-                            <DesktopDropdownItem key={item.label} item={item} />
+                            <DesktopDropdownItem key={item.label} item={item} flipSub={shouldFlipSub(idx)} />
                           ))}
                         </div>
                       </div>
@@ -502,11 +515,7 @@ const Header: React.FC = () => {
                       href={group.href}
                       target={group.href?.startsWith('http') ? '_blank' : '_self'}
                       rel="noopener noreferrer"
-                      className={`block px-[5px] xl:px-2 py-2 text-[8px] xl:text-[9px] 2xl:text-[10px] font-bold uppercase tracking-wide rounded transition-all duration-250 whitespace-nowrap ${
-                        scrolled
-                          ? 'hover:bg-brand-blue/6 hover:text-brand-blue'
-                          : 'hover:bg-white/12'
-                      }`}
+                      className="block px-[5px] xl:px-[7px] py-2 text-[8px] xl:text-[9px] 2xl:text-[10px] font-bold uppercase tracking-wide rounded-md transition-all duration-200 whitespace-nowrap text-slate-700 hover:bg-brand-blue/8 hover:text-brand-blue"
                     >
                       {group.label}
                     </a>
@@ -518,39 +527,33 @@ const Header: React.FC = () => {
 
           {/* Right actions â€” search + apply */}
           <div className="hidden lg:flex items-center gap-1 ml-auto flex-shrink-0">
-            <div className="w-px h-5 bg-current opacity-15 mx-1" />
+            <div className="w-px h-5 bg-gray-200 mx-1" />
             <button
               onClick={() => setSearchOpen(true)}
-              className={`p-2 rounded-lg transition-all duration-300 ${
-                scrolled ? 'hover:bg-brand-blue/5' : 'hover:bg-white/10'
-              }`}
+              className="p-2 rounded-lg text-slate-500 hover:bg-brand-blue/8 hover:text-brand-blue transition-all duration-200"
               aria-label="Search"
             >
               <Search className="w-4 h-4" />
             </button>
             <a
               href="#admissions"
-              className={`ml-1 flex items-center gap-1 px-3 py-2 rounded-lg text-[9px] xl:text-[10px] font-bold uppercase tracking-wide transition-all duration-300 whitespace-nowrap ${
-                scrolled
-                  ? 'bg-brand-blue text-white hover:bg-brand-navy shadow-sm hover:shadow-md'
-                  : 'bg-white/15 backdrop-blur-sm border border-white/20 hover:bg-white hover:text-brand-blue'
-              }`}
+              className="ml-0.5 flex items-center gap-1 px-3 py-2 rounded-lg text-[9px] xl:text-[10px] font-bold uppercase tracking-wide bg-brand-blue text-white hover:bg-brand-navy shadow-sm hover:shadow-md transition-all duration-200 whitespace-nowrap"
             >
               Apply Now <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
 
           {/* Mobile controls */}
-          <div className="lg:hidden flex items-center gap-2 ml-auto">
+          <div className="lg:hidden flex items-center gap-1 ml-auto text-slate-700">
             <button
               onClick={() => setSearchOpen(true)}
-              className={`p-2 rounded-lg transition-all ${scrolled ? 'hover:bg-brand-blue/5' : 'hover:bg-white/10'}`}
+              className="p-2 rounded-lg hover:bg-brand-blue/8 hover:text-brand-blue transition-all"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
             <button
-              className="p-2 rounded-lg"
+              className="p-2 rounded-lg hover:bg-brand-blue/8 hover:text-brand-blue transition-all"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
