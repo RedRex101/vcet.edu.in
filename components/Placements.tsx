@@ -39,7 +39,7 @@ const Placements: React.FC = () => {
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
-    const timers: NodeJS.Timeout[] = [];
+    const timers: ReturnType<typeof setInterval>[] = [];
 
     placementData.forEach((item, index) => {
       let currentStep = 0;

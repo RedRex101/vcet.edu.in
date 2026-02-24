@@ -14,45 +14,136 @@ interface MenuGroup {
 }
 
 const menuGroups: MenuGroup[] = [
-  { label: 'About Us', href: '#about' },
-  { 
-    label: 'Admission', 
+  {
+    label: 'About Us',
     dropdown: [
-      { label: 'Admission', href: '#admissions' },
-      { label: 'Training & Placements', href: '#placements' },
+      { label: 'About VCET', href: 'https://vcet.edu.in/about-us/' },
+      { label: 'Governing Council', href: 'https://vcet.edu.in/governing-council/' },
+      { label: "Principal's Desk", href: 'https://vcet.edu.in/principle-page/' },
+      { label: 'Dean Academics Desk', href: 'https://vcet.edu.in/dean-academicss-desk/' },
+      { label: 'Organizational Structure', href: 'https://vcet.edu.in/organizational-structure/' },
+      { label: 'Administration Faculty', href: 'https://vcet.edu.in/administration-faculty/' },
+      { label: 'Mandatory Disclosure', href: 'https://vcet.edu.in/wp-content/uploads/2026/01/Mandatory-Disclosure-as-On-December-2025-FINAL.pdf' },
+      { label: 'Audited Statement', href: 'https://vcet.edu.in/income-expenditure/' },
+      { label: 'EOA Reports', href: 'https://vcet.edu.in/eoa-2012-13-till-2019-20/' },
     ]
   },
-  { 
-    label: 'Academics', 
+  {
+    label: 'Admission',
     dropdown: [
-      { label: 'Departments', href: '#departments' },
-      { label: 'Academics', href: '#academics' },
-      { label: 'Research', href: '#research' },
-      { label: 'MMS (MBA)', href: '#mms' },
-      { label: 'Exam', href: '#exam' },
+      { label: 'First Year Engineering', href: 'https://vcet.edu.in/first-year-engineering/' },
+      { label: 'Eligibility', href: 'https://vcet.edu.in/eligibility/' },
+      { label: 'Courses & Intake', href: 'https://vcet.edu.in/courses-and-intake/' },
+      { label: 'Fee Structure', href: 'https://vcet.edu.in/fees-structure-fe-dse-mestructural-engineeringmms/' },
+      { label: 'Scholarships', href: 'https://vcet.edu.in/scholarships/' },
+      { label: 'Documents Required', href: 'https://vcet.edu.in/documents-required-fedsemestructural-engineeringmms/' },
     ]
   },
-  { 
-    label: 'Campus Life', 
+  {
+    label: 'Departments',
     dropdown: [
-      { label: 'Facilities', href: '#facilities' },
-      { label: 'Student Life @VCET', href: '#student-life' },
-      { label: 'Committees', href: '#committees' },
+      { label: 'Computer Engineering', href: 'https://vcet.edu.in/computer-engineering/' },
+      { label: 'Information Technology', href: 'https://vcet.edu.in/information-technology/' },
+      { label: 'Electronics & Telecomm.', href: 'https://vcet.edu.in/electronics-and-telecommunication-engineering/' },
+      { label: 'Mechanical Engineering', href: 'https://vcet.edu.in/mechanical-engineering/' },
+      { label: 'Civil Engineering', href: 'https://vcet.edu.in/civil-engineering-2/' },
+      { label: 'CS & Engg. (Data Science)', href: 'https://vcet.edu.in/computer-science-and-engineering-data-science/' },
+      { label: 'AI & Data Science', href: 'https://vcet.edu.in/artificial-intelligence-and-data-science/' },
+      { label: 'Electronics Engg. (VLSI)', href: 'https://vcet.edu.in/electronics-engineering-vlsi-design-and-technology/' },
+      { label: 'Instrumentation Engg.', href: 'https://vcet.edu.in/instrumentation-engineering/' },
+      { label: 'First Year Engineering', href: 'https://vcet.edu.in/first-year-engineering/' },
     ]
   },
-  { 
-    label: 'Accreditation', 
+  {
+    label: 'Academics',
+    dropdown: [
+      { label: 'Academics', href: 'https://vcet.edu.in/academics/' },
+      { label: 'Teaching Learning Process', href: 'https://vcet.edu.in/teaching-learning-proccess/' },
+      { label: 'NIRF', href: 'https://vcet.edu.in/nirf/' },
+      { label: 'IIT Remote Center', href: 'https://vcet.edu.in/iit-remote-center/' },
+      { label: 'Downloads', href: 'https://vcet.edu.in/downloads/' },
+      { label: 'Exam', href: 'https://vcet.edu.in/awards-achievements/' },
+      { label: 'Publications & Patents', href: 'https://vcet.edu.in/publications-journals-conference-books-patents/' },
+      { label: 'Funded Research', href: 'https://vcet.edu.in/funded-research/' },
+      { label: 'Consultancy Projects', href: 'https://vcet.edu.in/consultancy-projects/' },
+      { label: 'Research Policy', href: 'https://vcet.edu.in/research-policy-2/' },
+    ]
+  },
+  {
+    label: 'Facilities',
+    dropdown: [
+      { label: 'Library', href: 'https://vcet.edu.in/library/' },
+      { label: 'Central Computing Facility', href: 'https://vcet.edu.in/centeral-computing-facility/' },
+      { label: 'AICTE IDEA Lab', href: 'https://vcet.edu.in/aicte-idea-vcet/' },
+      { label: 'Texas Instruments Lab', href: 'https://vcet.edu.in/texas-instruments/' },
+      { label: 'Center of Excellence (Siemens)', href: 'https://vcet.edu.in/center-of-excellence-siemens/' },
+      { label: 'Robotics Lab', href: 'https://vcet.edu.in/industry-sponsored-robotics-lab/' },
+      { label: 'Oracle Academy', href: 'https://vcet.edu.in/oracle-academy/' },
+      { label: 'e-Yantra', href: 'https://vcet.edu.in/e-yantra/' },
+      { label: 'Sports Gymkhana', href: 'https://vcet.edu.in/sports-gymkhana/' },
+      { label: 'Counselling Room', href: 'https://vcet.edu.in/counselling-room/' },
+    ]
+  },
+  {
+    label: 'Student Life@VCET',
+    dropdown: [
+      { label: 'Students Council', href: 'https://vcet.edu.in/students-council/' },
+      { label: 'NSS', href: 'https://vcet.edu.in/nss/' },
+      { label: 'Cultural Committee', href: 'https://vcet.edu.in/cultural-committee/' },
+      { label: 'IEEE', href: 'https://vcet.edu.in/ieee/' },
+      { label: 'CSI', href: 'https://vcet.edu.in/csi/' },
+      { label: 'IIC', href: 'https://vcet.edu.in/iic/' },
+      { label: 'E-Cell', href: 'https://vcet.edu.in/e-cell/' },
+      { label: 'SAE', href: 'https://vcet.edu.in/sae/' },
+      { label: 'Airnova', href: 'https://vcet.edu.in/airnova/' },
+      { label: 'Centurion', href: 'https://vcet.edu.in/centurion/' },
+      { label: 'Hackathon', href: 'https://vcet.edu.in/hackathon/' },
+      { label: 'Distinguished Alumni', href: 'https://vcet.edu.in/distinguished-alumni/' },
+    ]
+  },
+  {
+    label: 'Committees',
+    dropdown: [
+      { label: 'Anti-Ragging Committee', href: 'https://vcet.edu.in/anti-ragging-committee/' },
+      { label: 'IQAC', href: 'https://vcet.edu.in/iqac/' },
+      { label: 'Grievance Redressal', href: 'https://vcet.edu.in/grievance-redressal-committee/' },
+      { label: 'Internal Complaint Committee', href: 'https://vcet.edu.in/internal-complaint-committee/' },
+      { label: 'SC/ST Committee', href: 'https://vcet.edu.in/sc-st-committee/' },
+      { label: 'College Development Committee', href: 'https://vcet.edu.in/college-development-committee/' },
+      { label: 'Sports Committee', href: 'https://vcet.edu.in/sports-committee/' },
+      { label: 'Statutory Committees', href: 'https://vcet.edu.in/statutory-committees/' },
+      { label: 'Student Dev. & Redressal', href: 'https://vcet.edu.in/student-grievance-redressal-committee-sdrc/' },
+    ]
+  },
+  {
+    label: 'NAAC',
     dropdown: [
       { label: 'NAAC', href: '#naac' },
-      { label: 'Accreditation', href: '#accreditation' },
+      { label: 'Accreditation (NBA)', href: 'https://vcet.edu.in/wp-content/uploads/2025/11/NBA_Certificate.pdf' },
+      { label: 'NIRF', href: 'https://vcet.edu.in/nirf/' },
+      { label: 'IQAC', href: 'https://vcet.edu.in/iqac/' },
+      { label: 'Best Practices', href: 'https://vcet.edu.in/best-practices-and-institutional-distinctiveness/' },
+      { label: 'SSS Report', href: 'https://vcet.edu.in/sss-report/' },
     ]
   },
-  { 
-    label: 'More', 
+  {
+    label: 'Training & Placements',
     dropdown: [
-      { label: 'Alumni Portal', href: '#alumni' },
-      { label: 'Career @VCET', href: '#career' },
-      { label: 'Contact Us', href: '#footer' },
+      { label: 'Placements', href: '#placements' },
+      { label: 'Training', href: 'https://vcet.edu.in/training/' },
+      { label: 'Our Recruiters', href: 'https://vcet.edu.in/our-recruiters/' },
+    ]
+  },
+  {
+    label: 'More',
+    dropdown: [
+      { label: 'MMS (MBA)', href: 'https://vcet.edu.in/mms/' },
+      { label: 'MMS Admission', href: 'https://vcet.edu.in/mms/admission/' },
+      { label: 'MMS Placement', href: 'https://vcet.edu.in/mms/placement/' },
+      { label: 'Alumni Portal', href: 'https://alumni.vcet.edu.in/' },
+      { label: 'Career @VCET', href: 'https://vcet.edu.in/wp-content/uploads/2025/05/Recruitment-Advertise-15-May-2025.pdf' },
+      { label: 'German Language Club', href: 'https://vcet.edu.in/german-language-club/' },
+      { label: 'Contact Us', href: 'https://vcet.edu.in/contact-us-2/' },
     ]
   },
 ];
@@ -117,12 +208,12 @@ const Header: React.FC = () => {
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5">
             {menuGroups.map((group) => (
               <div key={group.label} className="relative group/nav">
                 {group.dropdown ? (
                   <>
-                    <button className={`px-3 py-2 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1 rounded-md transition-all duration-300 ${
+                    <button className={`px-2 py-2 text-[10px] font-semibold uppercase tracking-wider flex items-center gap-0.5 rounded-md transition-all duration-300 ${
                       scrolled 
                         ? 'hover:bg-brand-blue/5 hover:text-brand-blue' 
                         : 'hover:bg-white/10'
@@ -131,7 +222,7 @@ const Header: React.FC = () => {
                       <ChevronDown className="w-3 h-3 opacity-50 group-hover/nav:rotate-180 transition-transform duration-300" />
                     </button>
                     <div className="absolute top-full left-0 pt-1 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform group-hover/nav:translate-y-0 translate-y-1">
-                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 min-w-[220px] py-2 overflow-hidden">
+                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 min-w-[240px] max-h-[80vh] overflow-y-auto py-2">
                         {group.dropdown.map((item) => (
                           <a
                             key={item.label}
@@ -223,7 +314,7 @@ const Header: React.FC = () => {
                         {group.label}
                         <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeDropdown === group.label ? 'rotate-180' : ''}`} />
                       </button>
-                      <div className={`overflow-hidden transition-all duration-300 ${activeDropdown === group.label ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}>
+                      <div className={`overflow-hidden transition-all duration-300 ${activeDropdown === group.label ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0'}`}>
                         <div className="pl-4 py-2 space-y-1">
                           {group.dropdown.map((item) => (
                             <a
