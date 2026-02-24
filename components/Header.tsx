@@ -189,26 +189,26 @@ const Header: React.FC = () => {
           ? 'bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.08)] border-b border-gray-100' 
           : 'bg-transparent'
       }`}>
-        <div className={`container mx-auto px-4 sm:px-6 h-14 md:h-[4.5rem] flex items-center justify-between transition-colors duration-500 ${
+        <div className={`container mx-auto px-4 sm:px-6 h-14 md:h-[4.5rem] flex items-center gap-3 transition-colors duration-500 ${
           scrolled ? 'text-brand-blue' : 'text-white'
         }`}>
           
           {/* Logo — only visible after scroll */}
-          <a href="#home" className="flex items-center gap-3 flex-shrink-0">
+          <a href="#home" className="flex-shrink-0">
             <img 
               src="/Images/VCET%20logo.jpeg" 
               alt="VCET Logo" 
               className={`w-auto rounded-sm transition-all duration-500 ${
                 scrolled
-                  ? 'h-10 md:h-12 opacity-100 pointer-events-auto'
-                  : 'h-0 opacity-0 pointer-events-none'
+                  ? 'h-10 md:h-11 opacity-100 pointer-events-auto'
+                  : 'h-0 w-0 opacity-0 pointer-events-none overflow-hidden'
               }`}
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </a>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-0.5">
+          {/* Desktop Nav — left-aligned next to logo */}
+          <nav className="hidden lg:flex items-center gap-0.5 flex-1">
             {menuGroups.map((group) => (
               <div key={group.label} className="relative group/nav">
                 {group.dropdown ? (
@@ -249,9 +249,11 @@ const Header: React.FC = () => {
                 )}
               </div>
             ))}
-            
-            <div className="w-px h-6 bg-current opacity-15 mx-2"></div>
+          </nav>
 
+          {/* Right actions — pushed to far right */}
+          <div className="hidden lg:flex items-center gap-1 ml-auto flex-shrink-0">
+            <div className="w-px h-6 bg-current opacity-15 mx-2"></div>
             <button 
               onClick={() => setIsSearchOpen(true)}
               className={`p-2 rounded-lg transition-all duration-300 ${
@@ -261,7 +263,6 @@ const Header: React.FC = () => {
             >
               <Search className="w-4 h-4" />
             </button>
-
             <a href="#admissions" className={`ml-1 flex items-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
               scrolled 
                 ? 'bg-brand-blue text-white hover:bg-brand-navy shadow-sm hover:shadow-md' 
@@ -269,10 +270,10 @@ const Header: React.FC = () => {
             }`}>
               Apply Now <ArrowUpRight className="w-3 h-3" />
             </a>
-          </nav>
+          </div>
 
           {/* Mobile Controls */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-2 ml-auto">
             <button 
               onClick={() => setIsSearchOpen(true)}
               className={`p-2 rounded-lg transition-all ${scrolled ? 'hover:bg-brand-blue/5' : 'hover:bg-white/10'}`}
