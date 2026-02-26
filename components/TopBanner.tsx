@@ -69,7 +69,22 @@ const TopBanner: React.FC = () => {
 
           </div>{/* closes logo+text unit */}
 
-          {/* ── Empty space reserved for logos ── */}
+          {/* NAAC & NBA Logos */}
+          <div className="flex items-center gap-4 flex-shrink-0 mx-auto">
+            <img
+              src="/Images/LOGO/nacc-bpp.png"
+              alt="NAAC B++ Accredited"
+              className="h-16 md:h-20 w-auto object-contain drop-shadow-sm"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <img
+              src="/Images/LOGO/NBA%20logo.webp"
+              alt="NBA Accredited"
+              className="h-16 md:h-20 w-auto object-contain drop-shadow-sm"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          </div>
+
           <div className="flex-1" />
 
           {/* Quick Contact + Social - Desktop only */}
