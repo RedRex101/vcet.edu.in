@@ -188,7 +188,7 @@ const bannerSlides = [
 const Hero: React.FC = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'notices'|'events'>('notices');
-  const [cardOpen, setCardOpen] = useState(false);
+  const [cardOpen, setCardOpen] = useState(true);
   const [packagesOpen, setPackagesOpen] = useState(false);
   const [packageIndex, setPackageIndex] = useState(0);
   const [slideIndex, setSlideIndex] = useState(0);
