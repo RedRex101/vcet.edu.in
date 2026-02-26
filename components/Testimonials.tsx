@@ -47,7 +47,7 @@ const testimonials: Testimonial[] = [
 
 const Testimonials: React.FC = () => {
   return (
-    <section className="py-10 md:py-16 bg-brand-light relative overflow-hidden">
+    <section id="testimonials" className="py-10 md:py-16 bg-brand-light relative overflow-hidden">
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-blue/[0.03] rounded-full translate-x-1/3 translate-y-1/3" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">

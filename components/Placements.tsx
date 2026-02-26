@@ -89,7 +89,7 @@ const Placements: React.FC = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative bg-brand-dark text-white overflow-hidden">
+    <section id="placements" ref={sectionRef} className="relative bg-brand-dark text-white overflow-hidden">
 
       {/* Lamp Header */}
       <LampContainer className="pt-10 pb-0 min-h-[320px]">

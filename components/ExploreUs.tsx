@@ -87,6 +87,7 @@ const exploreItems = [
 const ExploreUs: React.FC = () => {
   const scrollRef   = useRef<HTMLDivElement>(null);
   const pausedRef   = useRef(false);
+  const dirRef      = useRef<1 | -1>(1);        // 1 = left→right, -1 = right→left
   const resumeTimer = useRef<ReturnType<typeof setTimeout>  | null>(null);
   const autoTimer   = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -102,16 +103,21 @@ const ExploreUs: React.FC = () => {
     resumeTimer.current = setTimeout(() => { pausedRef.current = false; }, delay);
   }, []);
 
-  /* ── auto-scroll (1 px / 25 ms ≈ 40 px/s — very gentle) ─── */
+  /* ── auto-scroll: bounces left↔right (1 px / 25 ms ≈ 40 px/s) ── */
   useEffect(() => {
     autoTimer.current = setInterval(() => {
       if (pausedRef.current || !scrollRef.current) return;
       const el = scrollRef.current;
-      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
-        el.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        el.scrollLeft += 1;
+      const max = el.scrollWidth - el.clientWidth;
+
+      // Reverse direction at edges
+      if (dirRef.current === 1 && el.scrollLeft >= max - 2) {
+        dirRef.current = -1;
+      } else if (dirRef.current === -1 && el.scrollLeft <= 2) {
+        dirRef.current = 1;
       }
+
+      el.scrollLeft += dirRef.current;
     }, 25);
     return () => { if (autoTimer.current) clearInterval(autoTimer.current); };
   }, []);
@@ -144,7 +150,7 @@ const ExploreUs: React.FC = () => {
   };
 
   return (
-    <section className="py-20 md:py-24 bg-gradient-to-br from-brand-dark via-brand-navy to-brand-dark text-white relative overflow-hidden">
+    <section id="explore" className="py-20 md:py-24 bg-gradient-to-br from-brand-dark via-brand-navy to-brand-dark text-white relative overflow-hidden">
 
       {/* Background decor */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

@@ -393,7 +393,7 @@ const Hero: React.FC = () => {
       {/* ENQUIRE NOW — vertical tab on left edge */}
       <button
         onClick={() => setCardOpen(o => !o)}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-center gap-2 py-10 px-3 shadow-2xl transition-all duration-200 hover:brightness-110 active:scale-95"
+        className="absolute left-0 top-[38%] -translate-y-1/2 z-20 flex flex-col items-center justify-center gap-2 py-10 px-3 shadow-2xl transition-all duration-200 hover:brightness-110 active:scale-95"
         style={{
           background: 'rgba(11, 61, 145, 0.45)',
           backdropFilter: 'blur(16px)',
@@ -425,7 +425,7 @@ const Hero: React.FC = () => {
           borderLeft: 'none',
           boxShadow: '0 8px 32px rgba(196,149,53,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
           writingMode: 'vertical-rl',
-          top: 'calc(50% + 90px)',
+          top: 'calc(38% + 90px)',
         }}
         aria-label="Packages"
       >
@@ -448,18 +448,18 @@ const Hero: React.FC = () => {
             onClick={e => e.stopPropagation()}
           >
             {/* Image with close button pinned to its top-right corner */}
-            <div className="relative inline-block">
+            <div className="relative inline-flex justify-center">
               <img
                 src={packageImages[packageIndex].src}
                 alt={packageImages[packageIndex].label}
-                className="w-full h-auto block shadow-2xl"
-                style={{ maxHeight: '88vh', objectFit: 'contain', width: '100%' }}
+                className="block rounded-lg shadow-2xl"
+                style={{ maxHeight: '88vh', maxWidth: '95vw', objectFit: 'contain' }}
               />
               <button
                 onClick={() => setPackagesOpen(false)}
-                className="absolute top-2 right-2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-100 transition-colors"
+                className="absolute top-2 right-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-black/70 border border-white/20 shadow-xl hover:bg-black/90 transition-all duration-200"
               >
-                <X className="w-5 h-5 text-gray-700" />
+                <X className="w-5 h-5 text-white" />
               </button>
             </div>
 

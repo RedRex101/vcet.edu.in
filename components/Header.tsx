@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ArrowUpRight, Search, ChevronDown, ChevronRight } from 'lucide-react';
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -224,6 +224,213 @@ const menuGroups: MenuGroup[] = [
   },
 ];
 
+/* ─────────────────────────────────────────────────────
+   SEARCH INDEX — built from navigation + extras
+───────────────────────────────────────────────────── */
+interface SearchEntry {
+  label: string;
+  href: string;
+  category: string;
+  keywords: string[];    // extra terms for matching
+  external?: boolean;
+}
+
+/** Additional keyword aliases so users find pages with natural queries */
+const keywordMap: Record<string, string[]> = {
+  '/about-us':             ['vcet', 'vidyavardhini', 'history', 'vision', 'mission', 'about college', 'info'],
+  '/presidents-desk':      ['president message', 'chairman', 'trust'],
+  '/principals-desk':      ['principal message', 'head', 'director'],
+  '/governing-council':    ['board', 'management', 'trustees'],
+  '/administration':       ['admin', 'office', 'staff'],
+  '/strategic-plan':       ['plan', 'roadmap', 'goals'],
+  '/code-of-conduct':      ['rules', 'discipline', 'policy', 'conduct'],
+  '/courses-and-intake':   ['courses', 'intake', 'branches', 'seats', 'ug', 'pg', 'btech', 'mtech', 'engineering'],
+  '/fees-structure':       ['fees', 'tuition', 'payment', 'cost', 'fee structure'],
+  '/scholarships':         ['scholarship', 'financial aid', 'freeship', 'merit'],
+  '/brochure':             ['brochure', 'prospectus', 'download'],
+  '/documents-required':   ['documents', 'admission documents', 'required docs'],
+  '/cut-off':              ['cutoff', 'merit list', 'admission cutoff', 'rank'],
+  '/computer-engineering': ['comps', 'ce', 'computer', 'comp engg', 'cse'],
+  '/cs-data-science':      ['csds', 'data science', 'cs ds'],
+  '/information-technology': ['it', 'info tech'],
+  '/ai-data-science':      ['aids', 'artificial intelligence', 'ai', 'ml', 'machine learning'],
+  '/mechanical-engineering': ['mech', 'mechanical', 'me'],
+  '/electronics-telecomm': ['entc', 'electronics', 'telecomm', 'ece', 'extc'],
+  '/civil-engineering':    ['civil', 'ce civil', 'construction'],
+  '/first-year-engineering': ['fe', 'first year', 'fy'],
+  '/dean-academics':       ['dean', 'academic dean'],
+  '/academic-calendar':    ['calendar', 'semester dates', 'schedule'],
+  '/teaching-learning':    ['teaching', 'pedagogy', 'learning'],
+  '/swayam-nptel':         ['swayam', 'nptel', 'mooc', 'online courses'],
+  '/honours-minor':        ['honours', 'minor degree', 'honour'],
+  '/research':             ['research', 'r&d', 'innovation'],
+  '/funded-research':      ['funded', 'grants', 'sponsored research'],
+  '/publications':         ['publications', 'journals', 'papers', 'conferences'],
+  '/parents':              ['parents', 'patents'],
+  '/consultancy-projects': ['consultancy', 'industry projects'],
+  '/research-facility':    ['research lab', 'equipment', 'facility'],
+  '/research-conventions': ['conventions', 'conferences'],
+  '/research-policy':      ['research policy', 'guidelines'],
+  '/iic':                  ['iic', 'institution innovation council'],
+  '/nirf':                 ['nirf', 'ranking', 'national ranking'],
+  '/downloads':            ['downloads', 'forms', 'documents'],
+  '/central-computing':    ['computer lab', 'computing', 'it infrastructure', 'lab'],
+  '/library':              ['library', 'books', 'digital library', 'e-library'],
+  '/counseling-cell':      ['counseling', 'mental health', 'guidance', 'counselling'],
+  '/ladies-common-room':   ['lcr', 'ladies room', 'women'],
+  '/sports-gymkhana':      ['sports', 'gym', 'gymkhana', 'playground', 'athletics'],
+  '/health-facilities':    ['health', 'medical', 'doctor', 'first aid'],
+  '/differently-abled':    ['differently abled', 'disability', 'accessible', 'divyang'],
+  '/career-at-vcet':       ['career', 'jobs', 'recruitment', 'vacancies', 'work at vcet'],
+  '/students-council':     ['student council', 'student body'],
+  '/cultural-committee':   ['cultural', 'fest', 'events', 'annual day'],
+  '/sports-committee':     ['sports committee', 'games'],
+  '/literati':             ['literati', 'magazine', 'literary'],
+  '/nss':                  ['nss', 'national service scheme', 'social service'],
+  '/ebsb':                 ['ebsb', 'ek bharat shreshtha bharat'],
+  '/ieee':                 ['ieee', 'technical society'],
+  '/students-club':        ['clubs', 'student clubs', 'technical clubs'],
+  '/csi':                  ['csi', 'computer society'],
+  '/iete':                 ['iete', 'electronics society'],
+  '/ishrae':               ['ishrae', 'hvac', 'refrigeration'],
+  '/vmea':                 ['vmea', 'mechanical association'],
+  '/hackathon':            ['hackathon', 'coding competition', 'smart india'],
+  '/nsdc':                 ['nsdc', 'skill development'],
+  '/igbc':                 ['igbc', 'green building'],
+  '/college-development-committee': ['cdc', 'college development'],
+  '/iqac':                 ['iqac', 'quality assurance', 'quality'],
+  '/grievance-redressal':  ['grievance', 'complaint', 'redressal'],
+  '/srgc-committee':       ['srgc', 'student redressal'],
+  '/anti-ragging':         ['ragging', 'anti ragging', 'safety'],
+  '/sc-st-committee':      ['sc st', 'reservation', 'caste'],
+  '/internal-complaint':   ['icc', 'internal complaint', 'harassment'],
+  '/equal-opportunity':    ['equal opportunity', 'obc', 'minority'],
+  '/sedg-cell':            ['sedg', 'disadvantaged', 'economically weaker'],
+  '/sss':                  ['sss', 'student satisfaction survey'],
+  '/sss-report':           ['sss report', 'satisfaction report'],
+  '/ssr-cycle-1':          ['ssr', 'self study report', 'cycle 1', 'naac ssr'],
+  '/ssr-cycle-2':          ['ssr cycle 2', 'naac cycle 2'],
+  '/best-practices':       ['best practices', 'institutional distinctiveness'],
+  '/naac-score':           ['naac score', 'accreditation score', 'naac grade', 'naac rating'],
+  '/contact-us':           ['contact', 'phone', 'email', 'address', 'location', 'map', 'reach us'],
+  '/training':             ['training', 'placement training', 'tpo'],
+  '/e-cell':               ['ecell', 'entrepreneurship', 'startup'],
+  '/iiic':                 ['iiic', 'industry interaction', 'mou'],
+  '/exam-cell':            ['exam', 'examination', 'results', 'hall ticket', 'exam cell'],
+};
+
+/** Homepage section entries */
+const homepageSections: SearchEntry[] = [
+  { label: 'Home', href: '/', category: 'Homepage', keywords: ['home', 'main', 'homepage'] },
+  { label: 'Placements Overview', href: '/#placements', category: 'Homepage', keywords: ['placement graph', 'placement stats', 'highest package'] },
+  { label: 'Recruiters', href: '/#recruiters', category: 'Homepage', keywords: ['recruiters', 'companies', 'hiring partners'] },
+  { label: 'Gallery', href: '/#gallery', category: 'Homepage', keywords: ['gallery', 'photos', 'campus photos'] },
+  { label: 'Testimonials', href: '/#testimonials', category: 'Homepage', keywords: ['testimonials', 'alumni', 'reviews'] },
+  { label: 'Facilities', href: '/#facilities', category: 'Homepage', keywords: ['facilities', 'infrastructure', 'amenities'] },
+  { label: 'Achievements', href: '/#achievements', category: 'Homepage', keywords: ['achievements', 'awards', 'remarkable'] },
+  { label: 'Admissions Enquiry', href: '/#admissions', category: 'Homepage', keywords: ['admission form', 'enquiry', 'apply'] },
+];
+
+function buildSearchIndex(): SearchEntry[] {
+  const entries: SearchEntry[] = [];
+
+  for (const group of menuGroups) {
+    // Top-level items with direct href
+    if (group.href && !group.dropdown) {
+      entries.push({
+        label: group.label,
+        href: group.href,
+        category: group.label,
+        keywords: keywordMap[group.href] || [],
+        external: group.href.startsWith('http'),
+      });
+    }
+    // Dropdown items
+    if (group.dropdown) {
+      for (const item of group.dropdown) {
+        if (item.isGroupLabel) continue;
+        if (item.href) {
+          entries.push({
+            label: item.label,
+            href: item.href,
+            category: group.label,
+            keywords: keywordMap[item.href] || [],
+            external: item.href.startsWith('http'),
+          });
+        }
+        // Sub-items
+        if (item.subItems) {
+          for (const sub of item.subItems) {
+            // Avoid duplicates — only add if this exact href+label isn't already present
+            if (!entries.some(e => e.href === sub.href && e.label === sub.label)) {
+              entries.push({
+                label: sub.label,
+                href: sub.href,
+                category: group.label,
+                keywords: keywordMap[sub.href] || [],
+                external: sub.href.startsWith('http'),
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Add homepage sections
+  entries.push(...homepageSections);
+
+  return entries;
+}
+
+const SEARCH_INDEX = buildSearchIndex();
+
+function searchPages(query: string): SearchEntry[] {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+
+  const terms = q.split(/\s+/);
+
+  type Scored = { entry: SearchEntry; score: number };
+  const scored: Scored[] = [];
+
+  for (const entry of SEARCH_INDEX) {
+    const labelLower = entry.label.toLowerCase();
+    const catLower = entry.category.toLowerCase();
+    const kwJoined = entry.keywords.join(' ').toLowerCase();
+    const all = `${labelLower} ${catLower} ${kwJoined}`;
+
+    // Every term must match somewhere
+    const allMatch = terms.every(t => all.includes(t));
+    if (!allMatch) continue;
+
+    // Scoring: prefer label match > keyword match > category match
+    let score = 0;
+    if (labelLower === q) score += 100; // exact match
+    if (labelLower.startsWith(q)) score += 50;
+    for (const t of terms) {
+      if (labelLower.includes(t)) score += 20;
+      if (kwJoined.includes(t)) score += 10;
+      if (catLower.includes(t)) score += 5;
+    }
+    scored.push({ entry, score });
+  }
+
+  // Sort by score descending, then alphabetically
+  scored.sort((a, b) => b.score - a.score || a.entry.label.localeCompare(b.entry.label));
+
+  // Deduplicate by href (keep highest scored)
+  const seen = new Set<string>();
+  const results: SearchEntry[] = [];
+  for (const s of scored) {
+    if (seen.has(s.entry.href)) continue;
+    seen.add(s.entry.href);
+    results.push(s.entry);
+  }
+
+  return results.slice(0, 15); // limit to 15 results
+}
+
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    DESKTOP DROPDOWN ITEM
    Supports accordion for sub-items
@@ -434,14 +641,69 @@ const MobileAccordionItem: React.FC<MobileAccordionItemProps> = ({ item, onClose
    MAIN HEADER COMPONENT
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen]         = useState(false);
   const [searchOpen, setSearchOpen]         = useState(false);
   const [searchQuery, setSearchQuery]       = useState('');
   const [activeMenu, setActiveMenu]         = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [selectedResult, setSelectedResult] = useState(-1);
   const searchInputRef                      = useRef<HTMLInputElement>(null);
+  const resultsRef                          = useRef<HTMLDivElement>(null);
   const closeTimer                          = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [dropdownPos, setDropdownPos]       = useState<{ top: number; left: number; right: number; alignRight: boolean }>({ top: 0, left: 0, right: 0, alignRight: false });
+
+  /* Compute search results reactively */
+  const searchResults = useMemo(() => searchPages(searchQuery), [searchQuery]);
+
+  /* Reset selection when results change */
+  useEffect(() => { setSelectedResult(-1); }, [searchResults]);
+
+  /* Navigate to a search result */
+  const goToResult = useCallback((entry: SearchEntry) => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSelectedResult(-1);
+
+    if (entry.external) {
+      window.open(entry.href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // Handle homepage hash links like /#placements
+    if (entry.href.startsWith('/#')) {
+      const hash = entry.href.slice(1); // e.g. "#placements"
+      if (window.location.pathname === '/') {
+        // Already on homepage — just scroll
+        const el = document.querySelector(hash);
+        if (el) { el.scrollIntoView({ behavior: 'smooth' }); return; }
+      }
+      navigate('/');
+      // Wait for homepage to render, then scroll
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 600);
+      return;
+    }
+
+    // Handle anchor-only links like #placements (no slash prefix)
+    if (entry.href.startsWith('#')) {
+      if (window.location.pathname === '/') {
+        const el = document.querySelector(entry.href);
+        if (el) { el.scrollIntoView({ behavior: 'smooth' }); return; }
+      }
+      navigate('/');
+      setTimeout(() => {
+        const el = document.querySelector(entry.href);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 600);
+      return;
+    }
+
+    // Normal internal route
+    navigate(entry.href);
+  }, [navigate]);
 
   /* body scroll lock */
   useEffect(() => {
@@ -455,12 +717,33 @@ const Header: React.FC = () => {
     if (!searchOpen) setSearchQuery('');
   }, [searchOpen]);
 
-  /* ESC key closes search */
+  /* ESC key closes search, arrow keys navigate results, Enter selects */
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setSearchOpen(false); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setSearchOpen(false); return; }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedResult(prev =>
+          prev < searchResults.length - 1 ? prev + 1 : 0
+        );
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedResult(prev =>
+          prev > 0 ? prev - 1 : searchResults.length - 1
+        );
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedResult >= 0 && selectedResult < searchResults.length) {
+          goToResult(searchResults[selectedResult]);
+        } else if (searchResults.length > 0) {
+          goToResult(searchResults[0]); // Enter with no selection → go to first result
+        }
+      }
+    };
     if (searchOpen) window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [searchOpen]);
+  }, [searchOpen, searchResults, selectedResult, goToResult]);
 
   const openMenu = useCallback((label: string, el?: HTMLElement) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -745,7 +1028,7 @@ const Header: React.FC = () => {
           <X className="w-8 h-8" />
         </button>
 
-        <div className="container mx-auto px-6 h-full flex flex-col justify-center items-center">
+        <div className="container mx-auto px-6 h-full flex flex-col justify-start items-center pt-[12vh] sm:pt-[15vh]">
           <div className="w-full max-w-3xl">
             <label
               htmlFor="site-search"
@@ -762,6 +1045,7 @@ const Header: React.FC = () => {
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-b-2 border-white/20 text-2xl md:text-4xl lg:text-5xl font-bold text-white py-4 pr-20 focus:outline-none focus:border-brand-gold transition-colors placeholder:text-white/10"
                 placeholder="Search..."
+                autoComplete="off"
               />
               {searchQuery ? (
                 <button
@@ -777,7 +1061,17 @@ const Header: React.FC = () => {
 
             {/* Cancel / close row */}
             <div className="flex items-center justify-between mt-5">
-              <p className="text-white/20 text-xs tracking-widest">Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-mono text-[10px]">ESC</kbd> to close</p>
+              <p className="text-white/20 text-xs tracking-widest">
+                {searchQuery.trim() ? (
+                  <>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-mono text-[10px]">↑↓</kbd>{' '}navigate{' '}
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-mono text-[10px]">Enter</kbd>{' '}select{' '}
+                    <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-mono text-[10px]">ESC</kbd>{' '}close
+                  </>
+                ) : (
+                  <>Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-mono text-[10px]">ESC</kbd> to close</>
+                )}
+              </p>
               <button
                 onClick={() => setSearchOpen(false)}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/15 text-white/45 text-xs font-semibold uppercase tracking-widest hover:border-white/40 hover:text-white transition-all duration-200"
@@ -785,23 +1079,107 @@ const Header: React.FC = () => {
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
             </div>
-            <div className="mt-10">
-              <p className="text-white/30 text-xs font-semibold uppercase tracking-widest mb-4">
-                Popular
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {['Computer Engineering', 'Admissions 2025', 'Placements', 'Exam Cell', 'Faculty'].map(
-                  (item) => (
-                    <button
-                      key={item}
-                      className="px-4 py-2 rounded-full border border-white/10 text-white/50 text-sm hover:bg-white hover:text-brand-dark hover:border-white transition-all duration-300"
-                    >
-                      {item}
-                    </button>
-                  )
+
+            {/* ── Search Results ── */}
+            {searchQuery.trim() && (
+              <div ref={resultsRef} className="mt-8 max-h-[45vh] overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+                {searchResults.length > 0 ? (
+                  <>
+                    <p className="text-white/30 text-xs font-semibold uppercase tracking-widest mb-3">
+                      {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                    </p>
+                    <div className="space-y-1">
+                      {searchResults.map((entry, i) => {
+                        const isSelected = i === selectedResult;
+                        return (
+                          <button
+                            key={`${entry.href}-${entry.label}`}
+                            onClick={() => goToResult(entry)}
+                            onMouseEnter={() => setSelectedResult(i)}
+                            className={`w-full text-left flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                              isSelected
+                                ? 'bg-brand-gold/15 border border-brand-gold/30'
+                                : 'bg-white/[0.03] border border-transparent hover:bg-white/[0.06]'
+                            }`}
+                          >
+                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                              isSelected ? 'bg-brand-gold/20' : 'bg-white/5 group-hover:bg-white/10'
+                            }`}>
+                              <Search className={`w-4 h-4 ${isSelected ? 'text-brand-gold' : 'text-white/30'}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-semibold truncate ${isSelected ? 'text-brand-gold' : 'text-white/80 group-hover:text-white'}`}>
+                                {entry.label}
+                              </p>
+                              <p className="text-[11px] text-white/30 truncate mt-0.5">
+                                {entry.category}{entry.external ? ' · Opens in new tab' : ''}
+                              </p>
+                            </div>
+                            <ChevronRight className={`w-4 h-4 flex-shrink-0 transition-all duration-200 ${
+                              isSelected ? 'text-brand-gold translate-x-0.5' : 'text-white/10 group-hover:text-white/30'
+                            }`} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-10">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-6 h-6 text-white/20" />
+                    </div>
+                    <p className="text-white/40 text-sm font-medium">No results found for "{searchQuery}"</p>
+                    <p className="text-white/20 text-xs mt-2">Try different keywords or browse from the menu</p>
+                  </div>
                 )}
               </div>
-            </div>
+            )}
+
+            {/* ── Popular Tags (shown only when no query) ── */}
+            {!searchQuery.trim() && (
+              <div className="mt-10">
+                <p className="text-white/30 text-xs font-semibold uppercase tracking-widest mb-4">
+                  Popular
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Computer Engineering', href: '/computer-engineering' },
+                    { label: 'Admissions',           href: '/#admissions' },
+                    { label: 'Placements',           href: '/#placements' },
+                    { label: 'Exam Cell',            href: '/exam-cell' },
+                    { label: 'Fees Structure',       href: '/fees-structure' },
+                    { label: 'Contact Us',           href: '/contact-us' },
+                    { label: 'Cut Off',              href: '/cut-off' },
+                    { label: 'Library',              href: '/library' },
+                  ].map((tag) => (
+                    <button
+                      key={tag.label}
+                      onClick={() => {
+                        setSearchOpen(false);
+                        setSearchQuery('');
+                        if (tag.href.startsWith('/#')) {
+                          const hash = tag.href.slice(1);
+                          if (window.location.pathname === '/') {
+                            const el = document.querySelector(hash);
+                            if (el) { el.scrollIntoView({ behavior: 'smooth' }); return; }
+                          }
+                          navigate('/');
+                          setTimeout(() => {
+                            const el = document.querySelector(hash);
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          }, 600);
+                        } else {
+                          navigate(tag.href);
+                        }
+                      }}
+                      className="px-4 py-2 rounded-full border border-white/10 text-white/50 text-sm hover:bg-white hover:text-brand-dark hover:border-white transition-all duration-300"
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   motion,
   useScroll,
@@ -51,9 +51,10 @@ const wrap = (min: number, max: number, v: number) => {
 interface ParallaxRowProps {
   items: Achievement[];
   baseVelocity: number;
+  onImageClick: (item: Achievement) => void;
 }
 
-function ParallaxRow({ items, baseVelocity }: ParallaxRowProps) {
+function ParallaxRow({ items, baseVelocity, onImageClick }: ParallaxRowProps) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -84,6 +85,7 @@ function ParallaxRow({ items, baseVelocity }: ParallaxRowProps) {
           <div
             key={`${a.id}-${i}`}
             className="group relative flex-shrink-0 w-[280px] md:w-[340px] h-[210px] md:h-[250px] rounded-2xl overflow-hidden shadow-md cursor-pointer"
+            onClick={() => onImageClick(a)}
           >
             {/* Photo */}
             <img
@@ -124,8 +126,10 @@ function ParallaxRow({ items, baseVelocity }: ParallaxRowProps) {
 }
 
 const Achievements: React.FC = () => {
+  const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
+
   return (
-    <section className="py-10 md:py-14 bg-brand-light relative overflow-hidden">
+    <section id="achievements" className="py-10 md:py-14 bg-brand-light relative overflow-hidden">
       {/* Decorative blob */}
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand-blue/[0.03] rounded-full -translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
@@ -156,10 +160,47 @@ const Achievements: React.FC = () => {
         }}
       >
         {/* Row 1 — scrolls left */}
-        <ParallaxRow items={rowOne} baseVelocity={0.8} />
+        <ParallaxRow items={rowOne} baseVelocity={0.8} onImageClick={setSelectedAchievement} />
         {/* Row 2 — scrolls right */}
-        <ParallaxRow items={rowTwo} baseVelocity={-0.8} />
+        <ParallaxRow items={rowTwo} baseVelocity={-0.8} onImageClick={setSelectedAchievement} />
       </div>
+
+      {/* ── Image Lightbox Modal ── */}
+      {selectedAchievement && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setSelectedAchievement(null)}
+        >
+          <div
+            className="relative max-w-2xl w-full rounded-2xl overflow-hidden border-4 border-brand-gold/60 shadow-[0_8px_60px_rgba(212,168,67,0.25)] bg-white"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedAchievement(null)}
+              className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-brand-dark/70 hover:bg-brand-dark text-white transition-colors shadow-lg"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Image */}
+            <img
+              src={selectedAchievement.image}
+              alt={selectedAchievement.title}
+              className="w-full h-auto max-h-[70vh] object-contain bg-gray-50"
+            />
+
+            {/* Caption */}
+            <div className="px-5 py-4 bg-white border-t border-brand-gold/20">
+              <h3 className="text-base font-bold text-brand-navy">{selectedAchievement.title}</h3>
+              <p className="text-sm text-slate-500 mt-1">{selectedAchievement.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

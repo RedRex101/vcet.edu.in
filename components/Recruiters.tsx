@@ -37,7 +37,7 @@ const Bar: React.FC<{ pct: string; gold?: boolean }> = ({ pct, gold }) => (
 
 // -- Main ----------------------------------------------------------------------
 const Recruiters: React.FC = () => (
-  <section className="py-24 relative overflow-hidden">
+  <section id="recruiters" className="py-24 relative overflow-hidden">
 
     {/* Background image */}
     <img
