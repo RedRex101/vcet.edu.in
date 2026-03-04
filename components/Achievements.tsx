@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   motion,
   useScroll,
@@ -127,6 +127,11 @@ function ParallaxRow({ items, baseVelocity, onImageClick }: ParallaxRowProps) {
 
 const Achievements: React.FC = () => {
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
+  const [lightboxZoom, setLightboxZoom] = useState(1);
+
+  useEffect(() => {
+    setLightboxZoom(1);
+  }, [selectedAchievement]);
 
   return (
     <section id="achievements" className="py-10 md:py-14 bg-brand-light relative overflow-hidden">
@@ -170,6 +175,10 @@ const Achievements: React.FC = () => {
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
           onClick={() => setSelectedAchievement(null)}
+          onWheel={e => {
+            e.preventDefault();
+            setLightboxZoom(z => Math.min(1.35, Math.max(1, z + (e.deltaY < 0 ? 0.05 : -0.05))));
+          }}
         >
           <div
             className="relative max-w-2xl w-full rounded-2xl overflow-hidden border-4 border-brand-gold/60 shadow-[0_8px_60px_rgba(212,168,67,0.25)] bg-white"
@@ -191,6 +200,7 @@ const Achievements: React.FC = () => {
               src={selectedAchievement.image}
               alt={selectedAchievement.title}
               className="w-full h-auto max-h-[70vh] object-contain bg-gray-50"
+              style={{ transform: `scale(${lightboxZoom})`, transition: 'transform 0.2s ease' }}
             />
 
             {/* Caption */}

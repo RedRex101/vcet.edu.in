@@ -817,11 +817,6 @@ const Header: React.FC = () => {
                         }`}
                       >
                         {group.label}
-                        <ChevronDown
-                          className={`w-2 h-2 lg:w-2.5 lg:h-2.5 flex-shrink-0 transition-transform duration-300 ${
-                            activeMenu === group.label ? 'rotate-180 opacity-100' : 'opacity-40'
-                          }`}
-                        />
                       </button>
 
                   ) : group.href?.startsWith('/') ? (

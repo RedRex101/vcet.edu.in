@@ -1,13 +1,69 @@
-﻿import React from "react";
+﻿import React, { useEffect, useRef } from "react";
 
-// -- Data ----------------------------------------------------------------------
+// -- Data (all logos from /public/Images/recriters/) ---------------------------
 const recruiters = [
   { name: "Accenture",           logo: "/Images/recriters/Accenture-Logo-PNG-Vector-EPS-Free-Download.jpeg" },
+  { name: "Arcon",               logo: "/Images/recriters/arcon-logo.png" },
+  { name: "Bristlecone",         logo: "/Images/recriters/bristlecone-logo.png" },
+  { name: "BuiltIO",             logo: "/Images/recriters/builtio-300x72-1.png" },
+  { name: "Capgemini",           logo: "/Images/recriters/Capgemini-300x67-1.png" },
+  { name: "Coca-Cola",           logo: "/Images/recriters/coca-300x99-1.png" },
+  { name: "Cognizant",           logo: "/Images/recriters/cognizant-logo.png" },
+  { name: "Godrej Infotech",     logo: "/Images/recriters/godrej-infotech.jpeg" },
+  { name: "Hexaware",            logo: "/Images/recriters/hexaware-logo.jpeg" },
+  { name: "IBM",                 logo: "/Images/recriters/IBM-logo.png" },
+  { name: "Infosys",             logo: "/Images/recriters/infosys-300x116-1.png" },
+  { name: "Interactive Brokers", logo: "/Images/recriters/interactive-brokers.jpeg" },
+  { name: "Johnson Controls",    logo: "/Images/recriters/Johnson-logo.png" },
+  { name: "L&T",                 logo: "/Images/recriters/lt-300x81-1.jpg" },
+  { name: "LTIMindtree",         logo: "/Images/recriters/lti-logo.png" },
+  { name: "Mahindra",            logo: "/Images/recriters/mahindra-300x85-1.png" },
+  { name: "Neebal Technologies", logo: "/Images/recriters/neebal-technologoes.jpeg" },
+  { name: "Persistent Systems",  logo: "/Images/recriters/logo-rgb-black-e1751968833241.png" },
+  { name: "Schneider Electric",  logo: "/Images/recriters/schneider-logo.png" },
+  { name: "Tata Power",          logo: "/Images/recriters/Tata-Power.png" },
+  { name: "Technimant",          logo: "/Images/recriters/Technimant-logo.png" },
+  { name: "Verdantis",           logo: "/Images/recriters/verdantis-300x77-1.png" },
+  { name: "Vistaar",             logo: "/Images/recriters/Vistaar-logo-1.png" },
+  { name: "Vodafone",            logo: "/Images/recriters/VODAPHONE.jpg" },
+  { name: "Wipro",               logo: "/Images/recriters/wipro-logo.png" },
+  { name: "Zensoft",             logo: "/Images/recriters/Zensoft-logo.jpg" },
+  { name: "Zeus Learning",       logo: "/Images/recriters/Zeus-Learning-logo.png" },
+];
+
+// Row 1 — Top / best-known companies
+const rowOne = [
+  { name: "Accenture",           logo: "/Images/recriters/Accenture-Logo-PNG-Vector-EPS-Free-Download.jpeg" },
+  { name: "Capgemini",           logo: "/Images/recriters/Capgemini-300x67-1.png" },
+  { name: "Coca-Cola",           logo: "/Images/recriters/coca-300x99-1.png" },
+  { name: "Cognizant",           logo: "/Images/recriters/cognizant-logo.png" },
+  { name: "IBM",                 logo: "/Images/recriters/IBM-logo.png" },
+  { name: "Infosys",             logo: "/Images/recriters/infosys-300x116-1.png" },
+  { name: "L&T",                 logo: "/Images/recriters/lt-300x81-1.jpg" },
+  { name: "LTIMindtree",         logo: "/Images/recriters/lti-logo.png" },
+  { name: "Mahindra",            logo: "/Images/recriters/mahindra-300x85-1.png" },
+  { name: "Schneider Electric",  logo: "/Images/recriters/schneider-logo.png" },
+  { name: "Tata Power",          logo: "/Images/recriters/Tata-Power.png" },
+  { name: "Vodafone",            logo: "/Images/recriters/VODAPHONE.jpg" },
+  { name: "Wipro",               logo: "/Images/recriters/wipro-logo.png" },
+  { name: "Persistent Systems",  logo: "/Images/recriters/logo-rgb-black-e1751968833241.png" },
+];
+
+// Row 2 — Remaining partners
+const rowTwo = [
+  { name: "Arcon",               logo: "/Images/recriters/arcon-logo.png" },
+  { name: "Bristlecone",         logo: "/Images/recriters/bristlecone-logo.png" },
+  { name: "BuiltIO",             logo: "/Images/recriters/builtio-300x72-1.png" },
   { name: "Godrej Infotech",     logo: "/Images/recriters/godrej-infotech.jpeg" },
   { name: "Hexaware",            logo: "/Images/recriters/hexaware-logo.jpeg" },
   { name: "Interactive Brokers", logo: "/Images/recriters/interactive-brokers.jpeg" },
+  { name: "Johnson Controls",    logo: "/Images/recriters/Johnson-logo.png" },
   { name: "Neebal Technologies", logo: "/Images/recriters/neebal-technologoes.jpeg" },
-  { name: "Vodafone",            logo: "/Images/recriters/vodafone-logo.jpeg" },
+  { name: "Technimant",          logo: "/Images/recriters/Technimant-logo.png" },
+  { name: "Verdantis",           logo: "/Images/recriters/verdantis-300x77-1.png" },
+  { name: "Vistaar",             logo: "/Images/recriters/Vistaar-logo-1.png" },
+  { name: "Zensoft",             logo: "/Images/recriters/Zensoft-logo.jpg" },
+  { name: "Zeus Learning",       logo: "/Images/recriters/Zeus-Learning-logo.png" },
 ];
 
 // -- BentoBox ------------------------------------------------------------------
@@ -34,6 +90,161 @@ const Bar: React.FC<{ pct: string; gold?: boolean }> = ({ pct, gold }) => (
     />
   </div>
 );
+
+// -- MarqueeRow — infinite auto-scroll with pause on hover ---------------
+interface MarqueeRowProps {
+  items: typeof recruiters;
+  direction?: "left" | "right";
+  speed?: number; // seconds for one full cycle
+}
+
+const MarqueeRow: React.FC<MarqueeRowProps> = ({ items, direction = "left", speed = 40 }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<number>(0);
+  const posRef = useRef(0);
+  const pausedRef = useRef(false);
+  const initRef = useRef(false);
+  const draggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartPosRef = useRef(0);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const oneSetWidth = el.scrollWidth / 3;
+    const pxPerFrame = oneSetWidth / (speed * 60);
+
+    if (!initRef.current) {
+      if (direction === "right") {
+        posRef.current = oneSetWidth;
+      }
+      initRef.current = true;
+    }
+
+    const wrap = () => {
+      const el2 = scrollRef.current;
+      if (!el2) return;
+      const w = el2.scrollWidth / 3;
+      if (posRef.current >= w * 2) posRef.current -= w;
+      if (posRef.current < 0) posRef.current += w;
+    };
+
+    const tick = () => {
+      if (!pausedRef.current && !draggingRef.current) {
+        if (direction === "left") {
+          posRef.current += pxPerFrame;
+        } else {
+          posRef.current -= pxPerFrame;
+        }
+        wrap();
+        el.style.transform = `translateX(${-posRef.current}px)`;
+      }
+      animRef.current = requestAnimationFrame(tick);
+    };
+
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [direction, speed]);
+
+  // -- Drag / touch handlers --
+  const scheduleResume = () => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => {
+      pausedRef.current = false;
+    }, 2000); // auto-scroll resumes 2s after user stops dragging
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    draggingRef.current = true;
+    pausedRef.current = true;
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    dragStartXRef.current = e.clientX;
+    dragStartPosRef.current = posRef.current;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!draggingRef.current) return;
+    const delta = dragStartXRef.current - e.clientX;
+    const el = scrollRef.current;
+    if (!el) return;
+    const oneSetWidth = el.scrollWidth / 3;
+    let next = dragStartPosRef.current + delta;
+    if (next >= oneSetWidth * 2) next -= oneSetWidth;
+    if (next < 0) next += oneSetWidth;
+    posRef.current = next;
+    el.style.transform = `translateX(${-posRef.current}px)`;
+  };
+
+  const onPointerUp = () => {
+    draggingRef.current = false;
+    scheduleResume();
+  };
+
+  // -- Mouse wheel horizontal scrolling --
+  const onWheel = (e: React.WheelEvent) => {
+    // Only handle horizontal-like scroll (shift+wheel or trackpad)
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (delta === 0) return;
+    e.preventDefault();
+    pausedRef.current = true;
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+
+    const el = scrollRef.current;
+    if (!el) return;
+    const oneSetWidth = el.scrollWidth / 3;
+    posRef.current += delta * 0.8;
+    if (posRef.current >= oneSetWidth * 2) posRef.current -= oneSetWidth;
+    if (posRef.current < 0) posRef.current += oneSetWidth;
+    el.style.transform = `translateX(${-posRef.current}px)`;
+    scheduleResume();
+  };
+
+  const tripled = [...items, ...items, ...items];
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative w-full overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onWheel={onWheel}
+      style={{
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+        maskImage: "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+        touchAction: "pan-y",
+      }}
+    >
+      <div ref={scrollRef} className="flex w-max will-change-transform">
+        {tripled.map((company, i) => (
+          <div
+            key={`${company.name}-${i}`}
+            className="flex-shrink-0 mx-3 sm:mx-4"
+          >
+            <div className="group flex flex-col items-center justify-center gap-3 w-[140px] sm:w-[160px] md:w-[180px] p-5 sm:p-6 border-2 border-gray-100 bg-white rounded-xl shadow-sm hover:border-brand-gold/60 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-default">
+              <div className="w-full flex items-center justify-center h-[60px] sm:h-[70px]">
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  className="max-w-full max-h-[60px] sm:max-h-[70px] w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+              <span className="text-[11px] sm:text-[12px] font-bold text-slate-600 text-center tracking-wide group-hover:text-brand-blue transition-colors leading-snug">
+                {company.name}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // -- Main ----------------------------------------------------------------------
 const Recruiters: React.FC = () => (
@@ -200,7 +411,7 @@ const Recruiters: React.FC = () => (
           <Bar pct="29%" />
         </BentoBox>
 
-        {/* 5 — Hiring Partners static grid */}
+        {/* 5 — Hiring Partners — auto-scrolling marquee */}
         <div className="md:col-span-3 overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
           {/* Header strip */}
           <div className="px-8 pt-8 pb-6" style={{ background: "#0B3D91" }}>
@@ -212,28 +423,11 @@ const Recruiters: React.FC = () => (
               <div className="w-6 h-px" style={{ background: "#F4B400" }} />
             </div>
           </div>
-          {/* Logo grid */}
-          <div className="bg-white px-4 sm:px-8 py-6 sm:py-10">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-5">
-              {recruiters.map((company) => (
-                <div
-                  key={company.name}
-                  className="group flex flex-col items-center justify-center gap-4 p-6 border-2 border-gray-100 bg-white shadow-sm hover:border-brand-gold hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                >
-                  <div className="w-full flex items-center justify-center h-20">
-                    <img
-                      src={company.logo}
-                      alt={company.name}
-                      className="max-w-full max-h-20 w-auto object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  </div>
-                  <span className="text-[12px] font-bold text-slate-600 text-center tracking-wide group-hover:text-brand-blue transition-colors leading-snug">
-                    {company.name}
-                  </span>
-                </div>
-              ))}
-            </div>
+
+          {/* Marquee area */}
+          <div className="bg-white px-0 py-8 sm:py-10 space-y-6 overflow-hidden">
+            <MarqueeRow items={rowOne} direction="left" speed={45} />
+            <MarqueeRow items={rowTwo} direction="right" speed={40} />
           </div>
         </div>
 

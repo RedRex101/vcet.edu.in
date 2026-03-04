@@ -191,6 +191,7 @@ const Hero: React.FC = () => {
   const [cardOpen, setCardOpen] = useState(true);
   const [packagesOpen, setPackagesOpen] = useState(false);
   const [packageIndex, setPackageIndex] = useState(0);
+  const [pkgZoom, setPkgZoom] = useState(1);
   const [slideIndex, setSlideIndex] = useState(0);
 
   useEffect(() => {
@@ -415,7 +416,7 @@ const Hero: React.FC = () => {
 
       {/* PACKAGES — vertical tab below ENQUIRE NOW */}
       <button
-        onClick={() => { setPackagesOpen(true); setPackageIndex(0); }}
+        onClick={() => { setPackagesOpen(true); setPackageIndex(0); setPkgZoom(1); }}
         className="absolute left-0 z-20 flex flex-col items-center justify-center gap-2 py-10 px-3 shadow-2xl transition-all duration-200 hover:brightness-110 active:scale-95"
         style={{
           background: 'rgba(196, 149, 53, 0.55)',
@@ -442,6 +443,10 @@ const Hero: React.FC = () => {
         <div
           className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/80 backdrop-blur-sm"
           onClick={() => setPackagesOpen(false)}
+          onWheel={e => {
+            e.preventDefault();
+            setPkgZoom(z => Math.min(1.35, Math.max(1, z + (e.deltaY < 0 ? 0.05 : -0.05))));
+          }}
         >
           <div
             className="relative flex flex-col items-center max-h-[96vh] max-w-[95vw] w-full mx-4"
@@ -453,7 +458,13 @@ const Hero: React.FC = () => {
                 src={packageImages[packageIndex].src}
                 alt={packageImages[packageIndex].label}
                 className="block rounded-lg shadow-2xl"
-                style={{ maxHeight: '88vh', maxWidth: '95vw', objectFit: 'contain' }}
+                style={{
+                  maxHeight: '88vh',
+                  maxWidth: '95vw',
+                  objectFit: 'contain',
+                  transform: `scale(${pkgZoom})`,
+                  transition: 'transform 0.2s ease',
+                }}
               />
               <button
                 onClick={() => setPackagesOpen(false)}
