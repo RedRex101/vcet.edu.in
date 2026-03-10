@@ -105,8 +105,7 @@ const AboutVCET: React.FC = () => {
                   <p className="text-sm font-medium text-slate-500">VCET Campus Image Slot</p>
                   <p className="mt-1 text-xs text-slate-400">about-vcet-campus.jpg</p>
                 </div>
-              </div>
-
+              </div>  
             </div>
 
             <div className="space-y-8">
