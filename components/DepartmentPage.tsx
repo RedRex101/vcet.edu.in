@@ -59,7 +59,6 @@ const DepartmentPage: React.FC<DepartmentPageProps> = ({ dept }) => {
               </div>
             </div>
 
-            {/* Content Area */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
               {/* Main Content */}

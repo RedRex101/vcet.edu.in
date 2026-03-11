@@ -62,7 +62,6 @@ const Testimonials: React.FC = () => {
           </h2>
         </div>
 
-        {/* 2×2 Grid — all 4 cards always visible */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {testimonials.map((testimonial) => (
             <div
