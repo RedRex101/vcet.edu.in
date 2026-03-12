@@ -91,23 +91,6 @@ const About: React.FC = () => {
                 <p className="mt-1 text-xs text-slate-400">placeholder-campus.jpg</p>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {[
-                { icon: MapPin, title: 'Prime Location', desc: '2-minute walk from Vasai Road (W).' },
-                { icon: ShieldCheck, title: 'Trusted Institution', desc: 'Established reputation in engineering education.' },
-                { icon: Sparkles, title: 'Future Focused', desc: 'Learning built around modern technology.' },
-              ].map((item) => (
-                <article
-                  key={item.title}
-                  className="rounded-xl border border-brand-blue/10 bg-white px-4 py-4 shadow-sm transition-all duration-300 hover:border-brand-blue/25 hover:shadow-md"
-                >
-                  <item.icon className="mb-2 h-4 w-4 text-brand-blue" />
-                  <h3 className="text-sm font-semibold text-brand-navy">{item.title}</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-600">{item.desc}</p>
-                </article>
-              ))}
-            </div>
           </div>
 
           <div className="space-y-6 reveal" style={{transitionDelay: '0.2s'}}>
@@ -142,6 +125,23 @@ const About: React.FC = () => {
                 <p className="mb-2 text-4xl font-display font-bold text-white md:text-5xl">25+ Years</p>
                 <p className="text-sm font-semibold uppercase tracking-widest text-brand-gold">Of Academic Excellence</p>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {[
+                { icon: MapPin, title: 'Prime Location', desc: '2-minute walk from Vasai Road (W).' },
+                { icon: ShieldCheck, title: 'Trusted Institution', desc: 'Established reputation in engineering education.' },
+                { icon: Sparkles, title: 'Future Focused', desc: 'Learning built around modern technology.' },
+              ].map((item) => (
+                <article
+                  key={item.title}
+                  className="rounded-xl border border-brand-blue/10 bg-white px-4 py-4 shadow-sm transition-all duration-300 hover:border-brand-blue/25 hover:shadow-md"
+                >
+                  <item.icon className="mb-2 h-4 w-4 text-brand-blue" />
+                  <h3 className="text-sm font-semibold text-brand-navy">{item.title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-600">{item.desc}</p>
+                </article>
+              ))}
             </div>
           </div>
         </div>
