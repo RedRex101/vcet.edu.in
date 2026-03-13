@@ -82,28 +82,28 @@ const DeptComputerEngg: React.FC = () => {
     <PageLayout>
 
       {/* ── Hero Banner ─────────────────────────────────────────── */}
-      <header className="relative bg-gradient-to-r from-brand-navy to-slate-800 pt-28 pb-16 overflow-hidden shadow-lg border-b-4 border-brand-gold">
+      <header className="relative bg-gradient-to-r from-brand-navy to-slate-800 pt-24 md:pt-28 pb-12 md:pb-16 overflow-hidden shadow-lg border-b-4 border-brand-gold">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-white opacity-5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-64 h-64 rounded-full bg-brand-gold opacity-10 blur-2xl pointer-events-none" />
-        <nav className="absolute top-[52px] left-6 z-20 flex items-center space-x-2 text-sm font-medium text-white/70">
-          <a href="/" className="hover:text-brand-gold transition-colors duration-200 flex items-center"><i className="ph ph-house text-base" /></a>
+        <nav className="absolute top-6 left-6 z-20 flex items-center space-x-2 text-sm font-medium text-white/70">
+          <Link to="/" className="hover:text-brand-gold transition-colors duration-200 flex items-center"><i className="ph ph-house text-base" /></Link>
           <i className="ph ph-caret-right text-xs" />
           <span className="text-brand-gold font-semibold">Computer Engineering</span>
         </nav>
         <div className="container mx-auto px-6 max-w-7xl relative z-10">
 
-          <h1 className="font-display font-bold text-white leading-[1.08] tracking-tight text-center">
-            <span className="block text-4xl md:text-5xl lg:text-6xl">Computer Engineering</span>
+          <h1 className="font-display font-bold text-white leading-tight tracking-tight text-center">
+            <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Computer Engineering</span>
           </h1>
         </div>
       </header>
 
       {/* ── Page Body ────────────────────────────────────────────── */}
-      <div className="container mx-auto px-6 py-12 max-w-7xl flex flex-col lg:flex-row gap-10">
+      <div className="container mx-auto px-4 sm:px-6 py-10 md:py-12 max-w-7xl flex flex-col lg:flex-row gap-8 lg:gap-10">
 
         {/* ── Sticky Sidebar ───────────────────────────────────── */}
-        <aside className="w-full lg:w-1/4 flex-shrink-0">
-          <div className="sticky top-28 bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0">
+          <div className="sticky top-24 bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 max-h-[calc(100vh-7rem)] overflow-y-auto">
             <nav className="flex flex-col py-2">
               {sidebarLinks.map((link) => {
                 const isActive = activeId === link.id;
@@ -111,15 +111,15 @@ const DeptComputerEngg: React.FC = () => {
                   <button
                     key={link.id}
                     onClick={() => setActiveId(link.id)}
-                    className={`px-5 py-3 text-sm text-left transition-all flex items-center justify-between group border-l-[3px] ${
+                    className={`px-4 py-3 text-sm text-left transition-all flex items-center justify-between gap-3 group border-l-[3px] ${
                       isActive
                         ? 'bg-brand-navy text-brand-gold font-semibold border-brand-gold'
                         : 'text-brand-navy font-medium hover:bg-brand-navylight border-transparent hover:border-brand-gold'
                     }`}
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex min-w-0 items-center gap-3">
                       <i className={`ph ${link.icon} text-lg ${isActive ? '' : 'opacity-70'}`} />
-                      {link.label}
+                      <span className="truncate">{link.label}</span>
                     </span>
                     {isActive && (
                       <i className="ph ph-arrow-right text-xs transform group-hover:translate-x-1 transition-transform" />
@@ -132,14 +132,14 @@ const DeptComputerEngg: React.FC = () => {
         </aside>
 
         {/* ── Main Content ─────────────────────────────────────── */}
-        <main className="w-full lg:w-3/4 space-y-16">
+        <main className="w-full flex-1 space-y-14 md:space-y-16 min-w-0">
 
           {/* ════ ABOUT ═════════════════════════════════════════ */}
           {activeId === 'about' && (
             <>
               {/* dept info */}
-              <section className="reveal bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100">
-                <div className="space-y-6 text-slate-600 leading-relaxed text-justify">
+              <section className="reveal bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm border border-slate-100">
+                <div className="space-y-6 text-slate-600 leading-8 text-left">
                   <p>
                     The Department of Computer Engineering was established in the year 1999 to impart knowledge and develop practical
                     skills in various areas of computer engineering. The Department offers an undergraduate program in Computer Engineering
@@ -751,46 +751,50 @@ const DeptComputerEngg: React.FC = () => {
                 {/* Faculty cards grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-4">
                   {faculty.map((f) => (
-                    <Link
+                    <article
                       key={f.email}
-                      to={`/computer-engineering/faculty/${f.slug}`}
-                      className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 border-t-[3px] border-b-[3px] border-t-[#1a4b7c] border-b-[#fdb813] flex flex-col items-center px-6 pt-6 pb-5 no-underline"
+                      className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 border-t-[3px] border-b-[3px] border-t-[#1a4b7c] border-b-[#fdb813] flex flex-col items-center px-6 pt-6 pb-5"
                     >
-                      {/* Photo with gold badge at bottom-right */}
-                      <div className="relative w-32 h-36 mb-4 shrink-0">
-                        <img
-                          src={f.photo}
-                          alt={f.name}
-                          className="w-full h-full object-cover object-top"
-                          onError={(e) => {
-                            const t = e.currentTarget;
-                            t.style.display = 'none';
-                            (t.nextElementSibling as HTMLElement)!.style.display = 'flex';
-                          }}
-                        />
-                        {/* Fallback initials */}
-                        <div
-                          className="absolute inset-0 hidden items-center justify-center text-white font-bold text-2xl"
-                          style={{ background: f.color }}
-                        >
-                          {f.initials}
+                      <Link
+                        to={`/computer-engineering/faculty/${f.slug}`}
+                        className="flex w-full flex-col items-center no-underline"
+                      >
+                        {/* Photo with gold badge at bottom-right */}
+                        <div className="relative w-32 h-36 mb-4 shrink-0">
+                          <img
+                            src={f.photo}
+                            alt={f.name}
+                            className="w-full h-full object-cover object-top"
+                            onError={(e) => {
+                              const t = e.currentTarget;
+                              t.style.display = 'none';
+                              (t.nextElementSibling as HTMLElement)!.style.display = 'flex';
+                            }}
+                          />
+                          {/* Fallback initials */}
+                          <div
+                            className="absolute inset-0 hidden items-center justify-center text-white font-bold text-2xl"
+                            style={{ background: f.color }}
+                          >
+                            {f.initials}
+                          </div>
+                          {/* Gold accent square */}
+                          <div className="absolute bottom-0 right-0 w-5 h-5 bg-[#fdb813]" />
                         </div>
-                        {/* Gold accent square */}
-                        <div className="absolute bottom-0 right-0 w-5 h-5 bg-[#fdb813]" />
-                      </div>
 
-                      {/* Name */}
-                      <h3 className="text-base font-bold text-[#1a4b7c] text-center leading-snug">
-                        {f.name}
-                      </h3>
+                        {/* Name */}
+                        <h3 className="text-base font-bold text-[#1a4b7c] text-center leading-snug">
+                          {f.name}
+                        </h3>
 
-                      {/* Designation pill */}
-                      <span className="mt-2 px-3 py-0.5 bg-gray-100 text-gray-500 text-xs rounded font-medium text-center">
-                        {f.post}
-                      </span>
+                        {/* Designation pill */}
+                        <span className="mt-2 px-3 py-0.5 bg-gray-100 text-gray-500 text-xs rounded font-medium text-center">
+                          {f.post}
+                        </span>
 
-                      {/* Divider */}
-                      <div className="w-10 h-0.5 bg-gray-300 my-3" />
+                        {/* Divider */}
+                        <div className="w-10 h-0.5 bg-gray-300 my-3" />
+                      </Link>
 
                       {/* Email */}
                       <a
@@ -800,7 +804,7 @@ const DeptComputerEngg: React.FC = () => {
                         <i className="ph-fill ph-envelope text-sm shrink-0 text-gray-400" />
                         <span className="truncate">{f.email}</span>
                       </a>
-                    </Link>
+                    </article>
                   ))}
                 </div>
               </div>

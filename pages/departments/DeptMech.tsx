@@ -77,38 +77,38 @@ const DeptMech: React.FC = () => {
     <PageLayout>
 
       {/* ── Hero Banner ─────────────────────────────────────────── */}
-      <header className="relative bg-gradient-to-r from-brand-navy to-slate-800 pt-28 pb-16 overflow-hidden shadow-lg border-b-4 border-brand-gold">
+      <header className="relative bg-gradient-to-r from-brand-navy to-slate-800 pt-24 md:pt-28 pb-12 md:pb-16 overflow-hidden shadow-lg border-b-4 border-brand-gold">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-white opacity-5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-64 h-64 rounded-full bg-brand-gold opacity-10 blur-2xl pointer-events-none" />
-        <nav className="absolute top-[52px] left-6 z-20 flex items-center space-x-2 text-sm font-medium text-white/70">
-          <a href="/" className="hover:text-brand-gold transition-colors duration-200 flex items-center"><i className="ph ph-house text-base" /></a>
+        <nav className="absolute top-6 left-6 z-20 flex items-center space-x-2 text-sm font-medium text-white/70">
+          <Link to="/" className="hover:text-brand-gold transition-colors duration-200 flex items-center"><i className="ph ph-house text-base" /></Link>
           <i className="ph ph-caret-right text-xs" />
           <span className="text-brand-gold font-semibold">Mechanical Engineering</span>
         </nav>
         <div className="container mx-auto px-6 max-w-7xl relative z-10">
 
-          <h1 className="font-display font-bold text-white leading-[1.08] tracking-tight text-center">
-            <span className="block text-4xl md:text-5xl lg:text-6xl">Mechanical Engineering</span>
+          <h1 className="font-display font-bold text-white leading-tight tracking-tight text-center">
+            <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Mechanical Engineering</span>
           </h1>
         </div>
       </header>
 
       {/* ── Page Body ───────────────────────────────────────────── */}
-      <div className="container mx-auto px-6 py-12 max-w-7xl flex flex-col lg:flex-row gap-10">
+      <div className="container mx-auto px-4 sm:px-6 py-10 md:py-12 max-w-7xl flex flex-col lg:flex-row gap-8 lg:gap-10">
 
         {/* Sticky Sidebar */}
-        <aside className="w-full lg:w-1/4 flex-shrink-0">
-          <div className="sticky top-28 bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0">
+          <div className="sticky top-24 bg-white rounded-xl shadow-md overflow-hidden border border-slate-200 max-h-[calc(100vh-7rem)] overflow-y-auto">
             <nav className="flex flex-col py-2">
               {sidebarLinks.map((link) => {
                 const isActive = activeId === link.id;
                 return (
                   <button key={link.id} onClick={() => setActiveId(link.id)}
-                    className={`px-5 py-3 text-sm text-left transition-all flex items-center justify-between group border-l-[3px] ${isActive ? 'bg-brand-navy text-brand-gold font-semibold border-brand-gold' : 'text-brand-navy font-medium hover:bg-brand-navylight border-transparent hover:border-brand-gold'}`}
+                    className={`px-4 py-3 text-sm text-left transition-all flex items-center justify-between gap-3 group border-l-[3px] ${isActive ? 'bg-brand-navy text-brand-gold font-semibold border-brand-gold' : 'text-brand-navy font-medium hover:bg-brand-navylight border-transparent hover:border-brand-gold'}`}
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex min-w-0 items-center gap-3">
                       <i className={`ph ${link.icon} text-lg ${isActive ? '' : 'opacity-70'}`} />
-                      {link.label}
+                      <span className="truncate">{link.label}</span>
                     </span>
                     {isActive && <i className="ph ph-arrow-right text-xs transform group-hover:translate-x-1 transition-transform" />}
                   </button>
@@ -119,13 +119,13 @@ const DeptMech: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="w-full lg:w-3/4 space-y-16">
+        <main className="w-full flex-1 space-y-14 md:space-y-16 min-w-0">
 
           {/* ════ ABOUT ════════════════════════════════════════════ */}
           {activeId === 'about' && (
             <>
-              <section className="reveal bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100">
-                <div className="space-y-6 text-slate-600 leading-relaxed text-justify">
+              <section className="reveal bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm border border-slate-100">
+                <div className="space-y-6 text-slate-600 leading-8 text-left">
                   <p>
                     The Department of Mechanical Engineering was established in 1994 as one of the founding departments of VCET.
                     With an intake of 60 seats, the department has been at the forefront of providing quality education in
