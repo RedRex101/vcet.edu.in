@@ -582,7 +582,8 @@ This project is built by an amazing team of developers committed to creating a w
 | 7 | **sumritasawant101-droid** | [@sumritasawant101-droid](https://github.com/sumritasawant101-droid) |
 | 8 | **dakshata2405956201-svg** | [@dakshata2405956201-svg](https://github.com/dakshata2405956201-svg) |
 | 9 | **shweta1909patil-maker** | [@shweta1909patil-maker](https://github.com/shweta1909patil-maker) |
-| 10 | **antarikshsingh** | [@antarikshsingh](https://github.com/antarikshsingh) |
+| 10 | **Sumit Vishwakarma** | [@Sumitc0de](https://github.com/Sumitc0de) |
+| 11 | **antarikshsingh** | [@antarikshsingh](https://github.com/antarikshsingh) |
 
 ### How to contribute
 
