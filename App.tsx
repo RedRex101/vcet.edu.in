@@ -1,6 +1,10 @@
+// commit test
 import React, { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
+import { AuthProvider } from './admin/context/AuthContext';
+import ProtectedRoute from './admin/components/ProtectedRoute';
+import AdminLayout from './admin/components/AdminLayout';
 
 /* ── Homepage Components ── */
 import Header from './components/Header';
@@ -56,7 +60,6 @@ const TeachingLearning = lazy(() => import('./pages/academics/TeachingLearning')
 const SwayamNPTEL = lazy(() => import('./pages/academics/SwayamNPTEL'));
 const HonoursMinor = lazy(() => import('./pages/academics/HonoursMinor'));
 const ExamCell = lazy(() => import('./pages/academics/ExamCell'));
-const Downloads = lazy(() => import('./pages/academics/Downloads'));
 
 // pages/research
 const ResearchIntro = lazy(() => import('./pages/research/ResearchIntro'));
@@ -67,6 +70,9 @@ const ResearchFacility = lazy(() => import('./pages/research/ResearchFacility'))
 const ResearchConventions = lazy(() => import('./pages/research/ResearchConventions'));
 const ResearchPolicy = lazy(() => import('./pages/research/ResearchPolicy'));
 const NIRF = lazy(() => import('./pages/research/NIRF'));
+const ResearchPatents = lazy(() => import('./pages/research/Patents'));
+const ResearchIIC = lazy(() => import('./pages/research/IIC'));
+const ResearchDownloads = lazy(() => import('./pages/research/ResearchDownloads'));
 
 // pages/facilities
 const CentralComputing = lazy(() => import('./pages/facilities/CentralComputing'));
@@ -124,6 +130,28 @@ const NAACScore = lazy(() => import('./pages/naac/NAACScore'));
 // pages/contact
 const ContactUs = lazy(() => import('./pages/contact/ContactUs'));
 
+/* ── Admin Panel Pages (lazy) ── */
+const AdminLogin      = lazy(() => import('./admin/pages/Login'));
+const AdminDashboard  = lazy(() => import('./admin/pages/Dashboard'));
+const NoticesList     = lazy(() => import('./admin/pages/notices/NoticesList'));
+const NoticeForm      = lazy(() => import('./admin/pages/notices/NoticeForm'));
+const EventsList      = lazy(() => import('./admin/pages/events/EventsList'));
+const EventForm       = lazy(() => import('./admin/pages/events/EventForm'));
+const PlacementsList  = lazy(() => import('./admin/pages/placements/PlacementsList'));
+const PlacementForm   = lazy(() => import('./admin/pages/placements/PlacementForm'));
+const HeroSlidesList       = lazy(() => import('./admin/pages/hero-slides/HeroSlidesList'));
+const HeroSlideForm        = lazy(() => import('./admin/pages/hero-slides/HeroSlideForm'));
+const NewsTickerList       = lazy(() => import('./admin/pages/news-ticker/NewsTickerList'));
+const NewsTickerForm       = lazy(() => import('./admin/pages/news-ticker/NewsTickerForm'));
+const AchievementsList     = lazy(() => import('./admin/pages/achievements/AchievementsList'));
+const AchievementsForm     = lazy(() => import('./admin/pages/achievements/AchievementsForm'));
+const TestimonialsList     = lazy(() => import('./admin/pages/testimonials/TestimonialsList'));
+const TestimonialsForm     = lazy(() => import('./admin/pages/testimonials/TestimonialsForm'));
+const GalleryPage          = lazy(() => import('./admin/pages/gallery/GalleryPage'));
+const PlacementPartnersList = lazy(() => import('./admin/pages/placement-partners/PlacementPartnersList'));
+const PlacementPartnersForm = lazy(() => import('./admin/pages/placement-partners/PlacementPartnersForm'));
+const EnquiriesList        = lazy(() => import('./admin/pages/enquiries/EnquiriesList'));
+
 /* ── Loading Spinner ── */
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-white">
@@ -178,6 +206,7 @@ const HomePage: React.FC = () => {
 /* ── App with Router ── */
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
@@ -205,14 +234,21 @@ function App() {
 
           {/* Departments */}
           <Route path="/computer-engineering" element={<DeptComputerEngg />} />
+          <Route path="/computer-engineering/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/cs-data-science" element={<DeptCSDS />} />
           <Route path="/cs-data-science/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/information-technology" element={<DeptIT />} />
+          <Route path="/information-technology/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/ai-data-science" element={<DeptAIDS />} />
+          <Route path="/ai-data-science/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/mechanical-engineering" element={<DeptMech />} />
+          <Route path="/mechanical-engineering/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/electronics-telecomm" element={<DeptENTC />} />
+          <Route path="/electronics-telecommunication/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/civil-engineering" element={<DeptCivil />} />
+          <Route path="/civil-engineering/faculty/:slug" element={<CSDSFacultyProfile />} />
           <Route path="/first-year-engineering" element={<DeptFE />} />
+          <Route path="/first-year-engineering/faculty/:slug" element={<CSDSFacultyProfile />} />
 
           {/* Academics */}
           <Route path="/dean-academics" element={<DeanAcademics />} />
@@ -225,15 +261,16 @@ function App() {
           <Route path="/research" element={<ResearchIntro />} />
           <Route path="/funded-research" element={<FundedResearch />} />
           <Route path="/publications" element={<Publications />} />
-          <Route path="/patents" element={<Patents />} />
+          <Route path="/patents" element={<ResearchPatents />} />
           <Route path="/parents" element={<Patents />} />
           <Route path="/consultancy-projects" element={<ConsultancyProjects />} />
           <Route path="/research-facility" element={<ResearchFacility />} />
           <Route path="/research-conventions" element={<ResearchConventions />} />
           <Route path="/research-policy" element={<ResearchPolicy />} />
-          <Route path="/iic" element={<IIC />} />
+          <Route path="/iic" element={<ResearchIIC />} />
           <Route path="/nirf" element={<NIRF />} />
-          <Route path="/downloads" element={<Downloads />} />
+          <Route path="/research-downloads" element={<ResearchDownloads />} />
+          <Route path="/downloads" element={<ResearchDownloads />} />
 
           {/* Facilities */}
           <Route path="/central-computing" element={<CentralComputing />} />
@@ -287,9 +324,50 @@ function App() {
           <Route path="/e-cell" element={<ECell />} />
           <Route path="/iiic" element={<IIIC />} />
           <Route path="/exam-cell" element={<ExamCell />} />
+
+          {/* ─── Admin Panel ─── */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="notices" element={<NoticesList />} />
+            <Route path="notices/new" element={<NoticeForm />} />
+            <Route path="notices/:id/edit" element={<NoticeForm />} />
+            <Route path="events" element={<EventsList />} />
+            <Route path="events/new" element={<EventForm />} />
+            <Route path="events/:id/edit" element={<EventForm />} />
+            <Route path="placements" element={<PlacementsList />} />
+            <Route path="placements/new" element={<PlacementForm />} />
+            <Route path="placements/:id/edit" element={<PlacementForm />} />
+            <Route path="hero-slides" element={<HeroSlidesList />} />
+            <Route path="hero-slides/new" element={<HeroSlideForm />} />
+            <Route path="hero-slides/:id/edit" element={<HeroSlideForm />} />
+            <Route path="news-ticker" element={<NewsTickerList />} />
+            <Route path="news-ticker/new" element={<NewsTickerForm />} />
+            <Route path="news-ticker/:id/edit" element={<NewsTickerForm />} />
+            <Route path="achievements" element={<AchievementsList />} />
+            <Route path="achievements/new" element={<AchievementsForm />} />
+            <Route path="achievements/:id/edit" element={<AchievementsForm />} />
+            <Route path="testimonials" element={<TestimonialsList />} />
+            <Route path="testimonials/new" element={<TestimonialsForm />} />
+            <Route path="testimonials/:id/edit" element={<TestimonialsForm />} />
+            <Route path="gallery" element={<GalleryPage />} />
+            <Route path="placement-partners" element={<PlacementPartnersList />} />
+            <Route path="placement-partners/new" element={<PlacementPartnersForm />} />
+            <Route path="placement-partners/:id/edit" element={<PlacementPartnersForm />} />
+            <Route path="enquiries" element={<EnquiriesList />} />
+          </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 

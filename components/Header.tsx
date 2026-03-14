@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ArrowUpRight, Search, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, Search, ChevronDown, ChevronRight } from 'lucide-react';
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    TYPE DEFINITIONS
@@ -39,6 +39,7 @@ const menuGroups: MenuGroup[] = [
       { label: 'Administration',           href: '/administration' },
       { label: 'Strategic Plan',           href: '/strategic-plan' },
       { label: 'Code of Conduct',          href: '/code-of-conduct' },
+      { label: 'Contact Us',               href: '/contact-us' },
     ],
   },
 
@@ -51,7 +52,17 @@ const menuGroups: MenuGroup[] = [
       { label: 'Scholarships',         href: '/scholarships' },
       { label: 'Brochure',             href: '/brochure' },
       { label: 'Documents Required',   href: '/documents-required' },
-      { label: 'Cut Off 24-25',        href: '/cut-off' },
+      {
+        label: 'Cut Off 24-25',
+        href: '/cut-off',
+        subItems: [
+          { label: 'F.E. (First Year Engineering) 2025-26', href: 'https://vcet.edu.in/wp-content/uploads/2026/02/F.E-CUT-OFF-25-26-New.pdf' },
+          { label: 'M.E. (Masters of Engineering) 2025-26', href: 'https://vcet.edu.in/wp-content/uploads/2026/02/ME-CUT-OFF-25-26-New.pdf' },
+          { label: 'DSE (Direct Second Year) 2025-26', href: 'https://vcet.edu.in/wp-content/uploads/2026/02/DSE-CUT-OFF-25-26-New.pdf' },
+          { label: 'MMS (Master of Management Studies) 2025-26', href: 'https://vcet.edu.in/wp-content/uploads/2026/02/MMS-CUT-OFF-25-26-New.pdf' },
+          { label: 'First Year Engineering 2022-23', href: 'https://vcet.edu.in/wp-content/uploads/2023/05/FIRST-YEAR-ENGINEERING-CUT-OFF-22-23.pdf' },
+        ],
+      },
     ],
   },
 
@@ -60,11 +71,11 @@ const menuGroups: MenuGroup[] = [
     label: 'Departments',
     dropdown: [
       { label: 'Computer Engineering',                        href: '/computer-engineering' },
-      { label: 'CS & Engg. (Data Science)',                   href: '/cs-data-science' },
+      { label: 'Computer Science & Engineering (Data Science)', href: '/cs-data-science' },
       { label: 'Information Technology',                      href: '/information-technology' },
-      { label: 'AI & Data Science',                           href: '/ai-data-science' },
+      { label: 'Artificial Intelligence & Data Science',      href: '/ai-data-science' },
       { label: 'Mechanical Engineering',                      href: '/mechanical-engineering' },
-      { label: 'Electronics & Telecomm. Engg.',               href: '/electronics-telecomm' },
+      { label: 'Electronics & Telecommunication Engineering',       href: '/electronics-telecomm' },
       { label: 'Civil Engineering',                           href: '/civil-engineering' },
       { label: 'First Year Engineering',                      href: '/first-year-engineering' },
     ],
@@ -77,25 +88,27 @@ const menuGroups: MenuGroup[] = [
       { label: "Dean Academic's Desk",       href: '/dean-academics' },
       {
         label: 'Academic Calendar',
+        href: '/academic-calendar',
         subItems: [
-          { label: 'EVEN SEM 2025-26 SE TE BE (Tentative)', href: '/academic-calendar' },
-          { label: 'ODD SEM 2025-26 SE TE BE',               href: '/academic-calendar' },
-          { label: 'EVEN SEM 2024-25',                        href: '/academic-calendar' },
-          { label: 'ODD SEM 2024-25 FE ME',                   href: '/academic-calendar' },
-          { label: 'ODD SEM 2024-25 SE TE BE',                href: '/academic-calendar' },
-          { label: 'EVEN SEM 2023-24 SE TE BE',               href: '/academic-calendar' },
-          { label: 'EVEN SEM 2022-23 SE TE BE',               href: '/academic-calendar' },
-          { label: 'FE & ME EVEN SEM 2022-23',                href: '/academic-calendar' },
-          { label: 'FE ODD SEM 2022-23',                       href: '/academic-calendar' },
+          { label: 'EVEN SEM 2025-26 SE TE BE (Tentative)', href: 'https://vcet.edu.in/wp-content/uploads/2026/01/Academic_Calendar_Even_2025-26.pdf' },
+          { label: 'ODD SEM 2025-26 SE TE BE',               href: 'https://vcet.edu.in/wp-content/uploads/2025/08/acad-calen-odd-25-26.pdf' },
+          { label: 'EVEN SEM 2024-25',                        href: 'https://vcet.edu.in/wp-content/uploads/2024/12/Academic_Calender_2024_25_Even_2025-1.pdf' },
+          { label: 'ODD SEM 2024-25 FE ME',                   href: 'https://vcet.edu.in/wp-content/uploads/2024/09/Adobe-Scan-13-Sep-2024.pdf' },
+          { label: 'ODD SEM 2024-25 SE TE BE',                href: 'https://vcet.edu.in/wp-content/uploads/2024/07/Adobe-Scan-05-Jul-2024-3.pdf' },
+          { label: 'EVEN SEM 2023-24 SE TE BE',               href: 'https://vcet.edu.in/wp-content/uploads/2024/06/Academic-Calendar_Even-Sem_-2023-2024.pdf' },
+          { label: 'EVEN SEM 2022-23 SE TE BE',               href: 'https://vcet.edu.in/wp-content/uploads/2023/01/Academic-Calendar-Even-Semester-2022-23-SE-TE-BE.pdf' },
+          { label: 'FE & ME EVEN SEM 2022-23',                href: 'https://vcet.edu.in/wp-content/uploads/2023/03/FE_SemII_Academic_Calendar2022-23.pdf' },
+          { label: 'FE ODD SEM 2022-23',                       href: 'https://vcet.edu.in/wp-content/uploads/2023/01/Academic-Calendar-Odd-Semester-2022-23-F.E.pdf' },
         ],
       },
       { label: 'Teaching Learning Process',  href: '/teaching-learning' },
       { label: 'Swayam - NPTEL',             href: '/swayam-nptel' },
       {
         label: 'Honours / Minor Degree Program',
+        href:'/honours-minor',
         subItems: [
-          { label: 'Booklet Part 1', href: '/honours-minor' },
-          { label: 'Booklet Part 2', href: '/honours-minor' },
+          { label: 'Booklet Part 1', href: 'https://vcet.edu.in/wp-content/uploads/2022/08/Honours-Minor-Degree-Program-_Booklet_Part-1-Final.pdf' },
+          { label: 'Booklet Part 2', href: 'https://vcet.edu.in/wp-content/uploads/2022/08/Honours-Minor-Degree-Program-Booklet-_Part-2_Detailed-Syllabus-Final.pdf' },
         ],
       },
     ],
@@ -204,12 +217,6 @@ const menuGroups: MenuGroup[] = [
       { label: 'Best Practices & Institutional Distinctiveness', href: '/best-practices' },
       { label: 'NAAC Accreditation Score', href: '/naac-score' },
     ],
-  },
-
-  // 11. CONTACT US
-  {
-    label: 'Contact',
-    href: '/contact-us',
   },
 
   // 12. TRAINING & PLACEMENT
@@ -464,25 +471,41 @@ const DesktopDropdownItem: React.FC<DesktopDropdownItemProps> = ({ item, flipSub
   /* ── Item with sub-items → hover flyout panel to the right ── */
   if (item.subItems && item.subItems.length > 0) {
     const subSide = flipSub ? 'right-full mr-1' : 'left-full ml-1';
+    const isInternal = item.href?.startsWith('/');
+    
+    const triggerContent = (
+      <>
+        <span className="text-[11.5px] font-semibold">{item.label}</span>
+        <ChevronRight
+          className={`w-3.5 h-3.5 flex-shrink-0 ml-3 transition-all duration-250 ${
+            subOpen ? 'text-brand-blue translate-x-1' : 'text-brand-gold/50'
+          }`}
+        />
+      </>
+    );
+
+    const triggerClassName = `flex items-center justify-between px-4 py-2.5 cursor-pointer select-none transition-all duration-150 border-l-2 ${
+      subOpen
+        ? 'bg-brand-blue/8 text-brand-blue border-brand-blue'
+        : 'text-slate-700 hover:text-brand-blue hover:bg-brand-blue/5 border-transparent hover:border-brand-gold'
+    }`;
+
     return (
       <div
         className="relative"
         onMouseEnter={openSub}
         onMouseLeave={closeSub}
       >
-        {/* Trigger row */}
-        <div className={`flex items-center justify-between px-4 py-2.5 cursor-pointer select-none transition-all duration-150 border-l-2 ${
-          subOpen
-            ? 'bg-brand-blue/8 text-brand-blue border-brand-blue'
-            : 'text-slate-700 hover:text-brand-blue hover:bg-brand-blue/5 border-transparent hover:border-brand-gold'
-        }`}>
-          <span className="text-[11.5px] font-semibold">{item.label}</span>
-          <ChevronRight
-            className={`w-3.5 h-3.5 flex-shrink-0 ml-3 transition-all duration-250 ${
-              subOpen ? 'text-brand-blue translate-x-1' : 'text-brand-gold/50'
-            }`}
-          />
-        </div>
+        {/* Trigger row — clickable link to navigate */}
+        {isInternal ? (
+          <Link to={item.href!} className={triggerClassName}>
+            {triggerContent}
+          </Link>
+        ) : (
+          <a href={item.href} target="_blank" rel="noopener noreferrer" className={triggerClassName}>
+            {triggerContent}
+          </a>
+        )}
 
         {/* Sub-flyout panel */}
         <div
@@ -799,7 +822,7 @@ const Header: React.FC = () => {
           </Link>
 
           {/* â”€â”€â”€â”€ Desktop Nav â”€â”€â”€â”€ */}
-          <nav className="hidden md:flex items-center flex-1 min-w-0" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center flex-1 min-w-0 overflow-x-auto no-scrollbar" aria-label="Main navigation">
             <ul className="flex items-center gap-0.5 lg:gap-1 xl:gap-1.5">
               {menuGroups.map((group, idx) => (
                 <li key={group.label} className="relative flex-shrink-0">
@@ -842,29 +865,22 @@ const Header: React.FC = () => {
             </ul>
           </nav>
 
-          {/* Right actions â€” search + apply */}
+          {/* Right actions â€” search */}
           <div className="hidden md:flex items-center gap-1 flex-shrink-0">
-            <div className="w-px h-5 bg-gray-200 mx-1" />
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 rounded-lg text-slate-500 hover:bg-brand-blue/8 hover:text-brand-blue transition-all duration-200"
+              className="p-2 rounded-lg bg-brand-gold text-blue hover:bg-brand-gold-light transition-all duration-200"
               aria-label="Search"
             >
               <Search className="w-4 h-4" />
             </button>
-            <a
-              href="#admissions"
-              className="ml-0.5 flex items-center gap-1 px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg text-[9px] lg:text-[10px] xl:text-[12px] font-bold uppercase tracking-wide bg-brand-blue text-white hover:bg-brand-navy shadow-sm hover:shadow-md transition-all duration-200 whitespace-nowrap"
-            >
-              Apply Now <ArrowUpRight className="w-3 h-3" />
-            </a>
           </div>
 
           {/* Mobile controls */}
           <div className="md:hidden flex items-center gap-1 ml-auto text-slate-700">
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 rounded-lg hover:bg-brand-blue/8 hover:text-brand-blue transition-all"
+              className="p-2 rounded-lg bg-brand-gold text-blue hover:bg-brand-gold-light transition-all"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
@@ -994,13 +1010,6 @@ const Header: React.FC = () => {
 
           {/* Mobile footer actions */}
           <div className="mt-8 pt-6 border-t border-white/10">
-            <a
-              href="#admissions"
-              onClick={() => setMobileOpen(false)}
-              className="block w-full text-center bg-brand-gold text-brand-dark font-bold uppercase tracking-wider py-3.5 rounded-xl hover:bg-brand-gold-light transition-colors text-sm"
-            >
-              Apply Now
-            </a>
             <div className="mt-6 text-sm text-white/40 space-y-1">
               <p>vcet_inbox@vcet.edu.in</p>
               <p>+91 0250-2338234</p>

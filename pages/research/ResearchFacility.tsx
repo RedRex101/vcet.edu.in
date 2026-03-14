@@ -1,114 +1,185 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PageLayout from '../../components/PageLayout';
 import PageBanner from '../../components/PageBanner';
-import { Microscope, Cpu, Beaker, Server, Wrench, Wifi } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 
-const facilities = [
+type ApiEvent = {
+  id: number;
+  title: string;
+  description: string | null;
+  image: string | null;
+  category: string | null;
+  is_active: boolean;
+  created_at?: string;
+};
+
+type ResearchFacilityItem = {
+  id: number;
+  title: string;
+  description: string;
+  image: string | null;
+};
+
+const fallbackItems: ResearchFacilityItem[] = [
   {
-    icon: Cpu,
-    title: 'Advanced Computing Lab',
-    description: 'High-performance computing infrastructure with GPU clusters, cloud computing access, and AI/ML workstations for cutting-edge research.',
-    placeholder: 'computing-lab.jpg',
+    id: 1,
+    title: 'Computational Facility',
+    description:
+      'Licensed simulation and design platforms such as ANSYS, MATLAB, SolidWorks, and COMSOL are used for analysis, modeling, and problem-solving across engineering domains.',
+    image: null,
   },
   {
-    icon: Microscope,
-    title: 'Material Testing Lab',
-    description: 'Equipped with UTM, hardness testers, and microstructure analysis tools for civil and mechanical engineering research.',
-    placeholder: 'material-testing-lab.jpg',
+    id: 2,
+    title: 'Experimental Research Setups',
+    description:
+      'The department supports hands-on experimentation through facilities including subsonic wind tunnel testing, bomb calorimeter, optical microscope, rotor bench, VCR bench, and CNG test bench.',
+    image: null,
   },
   {
-    icon: Beaker,
-    title: 'Environmental Engineering Lab',
-    description: 'Facilities for water quality testing, air pollution monitoring, and environmental impact assessment studies.',
-    placeholder: 'environmental-lab.jpg',
-  },
-  {
-    icon: Wifi,
-    title: 'IoT & Embedded Systems Lab',
-    description: 'Comprehensive IoT prototyping lab with sensors, microcontrollers, FPGA boards, and wireless communication modules.',
-    placeholder: 'iot-lab.jpg',
-  },
-  {
-    icon: Server,
-    title: 'Networking & Cybersecurity Lab',
-    description: 'Network simulation tools, firewalls, and cybersecurity testing infrastructure for security research.',
-    placeholder: 'networking-lab.jpg',
-  },
-  {
-    icon: Wrench,
-    title: 'Workshop & Fabrication Lab',
-    description: '3D printers, CNC machines, laser cutters, and traditional workshop equipment for prototyping and fabrication.',
-    placeholder: 'fabrication-lab.jpg',
+    id: 3,
+    title: 'Research and Innovation Outcomes',
+    description:
+      'Student and faculty teams regularly present project outcomes in competitions such as Avishkar, with participations, rankings, and award-winning prototypes demonstrating applied research impact.',
+    image: null,
   },
 ];
 
+const API_BASE =
+  ((import.meta.env.VITE_API_URL as string | undefined) ?? 'https://vcet.edu.in').replace(/\/$/, '') + '/api';
+
+function isResearchFacilityCategory(category: string | null): boolean {
+  if (!category) return false;
+  const value = category.toLowerCase().trim();
+  return value === 'research facility' || value === 'research facilities' || value === 'research-facility';
+}
+
 const ResearchFacility: React.FC = () => {
+  const [items, setItems] = useState<ResearchFacilityItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadFacilities() {
+      try {
+        const response = await fetch(`${API_BASE}/events`, {
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const json = (await response.json()) as { data?: ApiEvent[] };
+        const data = Array.isArray(json.data) ? json.data : [];
+
+        const mapped = data
+          .filter((event) => event.is_active && isResearchFacilityCategory(event.category))
+          .map<ResearchFacilityItem>((event) => ({
+            id: event.id,
+            title: event.title,
+            description: event.description?.trim() || 'Description will be updated soon.',
+            image: event.image,
+          }));
+
+        setItems(mapped);
+      } catch {
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadFacilities();
+    return () => controller.abort();
+  }, []);
+
+  const facilities = useMemo(() => {
+    if (items.length > 0) return items;
+    return fallbackItems;
+  }, [items]);
+
   return (
     <PageLayout>
       <PageBanner
-        title="Research Facility"
+        title="Research Facilities"
         breadcrumbs={[
           { label: 'Research', href: '/research' },
-          { label: 'Research Facility' },
+          { label: 'Research Facilities' },
         ]}
       />
 
-      {/* Introduction */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto text-center reveal">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-10 h-0.5 bg-brand-gold" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
-                Infrastructure
-              </span>
-              <div className="w-10 h-0.5 bg-brand-gold" />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-navy mb-4">
-              State-of-the-Art Research Facilities
+      <section className="py-14 md:py-20 bg-white border-b border-[#E5E7EB]">
+        <div className="container mx-auto px-4 sm:px-6 max-w-[1200px]">
+          <div className="max-w-4xl reveal">
+            <span className="inline-block text-[13px] font-bold uppercase tracking-[0.24em] text-[#fdb813] border-b-2 border-[#fdb813] pb-1 mb-5">
+              Informative Visuals
+            </span>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-[#1a4b7c] tracking-tight leading-[1.15] mb-4">
+              Facility Highlights and Outcomes
             </h2>
-            <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto">
-              VCET provides well-equipped research laboratories and infrastructure across
-              departments to support faculty and student research activities. Our modern
-              facilities enable cutting-edge research in diverse engineering and technology domains.
+            <p className="text-[#1A1A1A]/70 leading-[1.8] text-[16px] md:text-[17px] max-w-3xl">
+              Explore computational resources, experimental setups, and innovation highlights presented with focused descriptions.
+              These visuals reflect core research capabilities and outcomes across departments.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Facilities Grid */}
-      <section className="py-16 bg-brand-light">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {facilities.map((facility, idx) => (
-                <div
-                  key={facility.title}
-                  className="reveal bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500"
-                  style={{ transitionDelay: `${idx * 0.08}s` }}
-                >
-                  {/* Image Placeholder */}
-                  <div className="aspect-[16/10] bg-gradient-to-br from-brand-blue/5 to-brand-gold/5 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-white/60 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <facility.icon className="w-6 h-6 text-brand-blue/40" />
-                      </div>
-                      <p className="text-[10px] text-slate-400">{facility.placeholder}</p>
-                    </div>
-                  </div>
+      <section className="py-14 md:py-20 bg-[#F7F9FC]">
+        <div className="container mx-auto px-4 sm:px-6 max-w-[1200px]">
+          {loading && (
+            <div className="mb-6 text-[14px] font-semibold uppercase tracking-[0.14em] text-[#6B7280]">
+              Loading facilities...
+            </div>
+          )}
 
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-brand-blue to-brand-navy rounded-lg flex items-center justify-center flex-shrink-0">
-                        <facility.icon className="w-5 h-5 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-7">
+            {facilities.map((item, index) => (
+              <article
+                key={item.id}
+                className="reveal group bg-white border border-[#E3E8EF] rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.10)] hover:-translate-y-0.5 transition-all duration-300"
+                style={{ transitionDelay: `${index * 0.06}s` }}
+              >
+                <div className="relative aspect-[16/10] bg-gradient-to-br from-[#EEF3F9] to-[#E8EDF5] border-b border-[#E3E8EF]">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-center px-4">
+                      <div className="w-16 h-16 rounded-2xl border border-dashed border-[#1a4b7c]/35 bg-white/80 backdrop-blur-sm flex items-center justify-center mb-3">
+                        <ImageIcon className="w-6 h-6 text-[#1a4b7c]/50" />
                       </div>
-                      <h3 className="font-display font-bold text-brand-navy">{facility.title}</h3>
+                      <p className="text-[11px] text-[#5F6D82] font-semibold uppercase tracking-[0.14em]">
+                        informative-image.jpg
+                      </p>
+                      <p className="text-[12px] text-[#7C8AA0] mt-1">
+                        16:10 recommended
+                      </p>
                     </div>
-                    <p className="text-sm text-slate-600 leading-relaxed">{facility.description}</p>
+                  )}
+
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/85 text-[#1a4b7c] text-[10px] font-bold uppercase tracking-[0.12em] border border-[#DCE3EE]">
+                      Research Note {index + 1}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="p-5 md:p-6">
+                  <h3 className="font-display font-bold text-[#153E6D] text-xl leading-tight mb-2 group-hover:text-[#1a4b7c] transition-colors duration-200">
+                    {item.title}
+                  </h3>
+                  <div className="w-10 h-[2px] bg-[#fdb813] mb-3" />
+                  <p className="text-[15px] md:text-[16px] text-[#4B5563] leading-[1.8]">
+                    {item.description}
+                  </p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>

@@ -1,25 +1,69 @@
 import React from 'react';
 import PageLayout from '../../components/PageLayout';
 import PageBanner from '../../components/PageBanner';
-import { Award, BarChart3, TrendingUp, ExternalLink, FileText } from 'lucide-react';
+import { ArrowUpRight, Download, FileText, FolderOpen } from 'lucide-react';
 
-const nirfDetails = [
-  {
-    label: 'Framework',
-    value: 'National Institutional Ranking Framework',
-    description: 'Approved by the Ministry of Education, Government of India',
-  },
-  {
-    label: 'Parameters',
-    value: '5 Key Parameters',
-    description: 'Teaching, Learning & Resources; Research & Professional Practice; Graduation Outcomes; Outreach & Inclusivity; Perception',
-  },
-  {
-    label: 'Category',
-    value: 'Engineering',
-    description: 'VCET participates in the Engineering category of NIRF rankings',
-  },
+type PdfItem = {
+  title: string;
+  year: string;
+  href: string;
+  note: string;
+};
+
+const sectionTabs = [
+  { label: 'Reports', href: '#reports' },
 ];
+
+const reportPdfs: PdfItem[] = [
+  { title: 'NIRF 2025 Engineering - VCET', year: '2025', href: '/nirf/NIRF_2025_ENGINEERING_VCET.pdf', note: 'Engineering category PDF' },
+  { title: 'NIRF 2025 Management - VCET', year: '2025', href: '/nirf/NIRF2025_MANAGEMENT_VCET.pdf', note: 'Management category PDF' },
+  { title: 'NIRF 2025 Overall - VCET', year: '2025', href: '/nirf/NIRF2025_Overall_VCET.pdf', note: 'Overall category PDF' },
+];
+
+const PdfGrid: React.FC<{ items: PdfItem[] }> = ({ items }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      {items.map((item, idx) => (
+        <article
+          key={`${item.title}-${item.year}-${idx}`}
+          className="reveal group border border-[#DCE5F0] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.05)] hover:shadow-[0_8px_20px_rgba(15,23,42,0.09)] transition-shadow"
+          style={{ transitionDelay: `${idx * 0.04}s` }}
+        >
+          <div className="px-4 py-3 border-b border-[#E5ECF4] bg-[#F8FBFF] flex items-center justify-between gap-3">
+            <p className="text-[12px] uppercase tracking-[0.1em] font-extrabold text-[#1A4B7C]">{item.year}</p>
+            <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.08em] text-[#6B7280]">
+              <FileText className="w-3.5 h-3.5" />
+              PDF
+            </span>
+          </div>
+          <div className="p-4">
+            <h4 className="font-display font-bold text-[#1A4B7C] text-[18px] leading-snug mb-1.5">{item.title}</h4>
+            <p className="text-[14px] text-[#6B7280] mb-4">{item.note}</p>
+            <div className="flex items-center gap-2">
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#1A4B7C] text-white text-[12px] font-bold hover:bg-[#173F66] transition-colors"
+              >
+                Open
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={item.href}
+                download
+                className="inline-flex items-center gap-1.5 px-3 py-2 border border-[#D0DCEA] text-[#1A4B7C] text-[12px] font-bold hover:border-[#1A4B7C] transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Download
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+};
 
 const NIRF: React.FC = () => {
   return (
@@ -32,130 +76,67 @@ const NIRF: React.FC = () => {
         ]}
       />
 
-      {/* Introduction */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="reveal" style={{ transitionDelay: '0.1s' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-0.5 bg-brand-gold" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
-                    Rankings
-                  </span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-navy mb-4">
-                  National Institutional Ranking Framework (NIRF)
-                </h2>
-                <p className="text-slate-600 leading-relaxed mb-4">
-                  VCET actively participates in the National Institutional Ranking Framework (NIRF)
-                  established by the Ministry of Education, Government of India. NIRF provides a
-                  methodology for ranking institutions across the country based on objective criteria
-                  and data-driven parameters.
-                </p>
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  The framework evaluates institutions on five broad parameters covering teaching,
-                  learning, research, graduation outcomes, outreach, inclusivity, and overall
-                  perception. VCET's participation reflects its commitment to transparency and
-                  continuous improvement.
-                </p>
-                <a
-                  href="https://www.nirfindia.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-blue to-brand-navy text-white text-sm font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  Visit NIRF Portal
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-
-              {/* NIRF Certificate Placeholder */}
-              <div className="reveal">
-                <div className="aspect-[3/4] bg-brand-light rounded-2xl border border-gray-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-brand-blue/20 to-brand-gold/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Award className="w-8 h-8 text-brand-blue/40" />
-                    </div>
-                    <p className="text-xs text-slate-400">nirf-certificate.jpg</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section className="relative py-14 md:py-16 bg-[#0F355B] border-b border-[#0D2F50] overflow-hidden">
+        <div className="absolute inset-0 opacity-35 pointer-events-none">
+          <div className="absolute -top-20 right-0 w-72 h-72 rounded-full bg-[#2A76BE]/25 blur-3xl" />
+          <div className="absolute -bottom-16 left-0 w-72 h-72 rounded-full bg-[#fdb813]/20 blur-3xl" />
         </div>
-      </section>
 
-      {/* NIRF Details */}
-      <section className="py-16 bg-brand-light">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="reveal text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-navy mb-3">
-                About NIRF
+        <div className="container mx-auto px-4 sm:px-6 max-w-[1200px] relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="reveal lg:col-span-7">
+              <span className="inline-block text-[12px] font-bold uppercase tracking-[0.22em] text-[#fdb813] border-b border-[#fdb813]/60 pb-1 mb-4">
+                NIRF Document Library
+              </span>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-white leading-[1.12] mb-4 tracking-tight">
+                National Institutional Ranking Framework
               </h2>
-              <p className="text-slate-500 max-w-xl mx-auto">
-                Understanding the national ranking framework and its parameters
+              <p className="text-white/85 text-[16px] md:text-[18px] leading-[1.8] max-w-3xl">
+                This page is fully dedicated to NIRF report PDFs, with direct open and download actions.
               </p>
             </div>
 
-            <div className="space-y-5">
-              {nirfDetails.map((detail, idx) => (
-                <div
-                  key={idx}
-                  className="reveal bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:border-brand-gold/30 transition-all duration-500"
-                  style={{ transitionDelay: `${idx * 0.1}s` }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-blue to-brand-navy flex items-center justify-center">
-                      <BarChart3 className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-gold mb-1">
-                        {detail.label}
-                      </p>
-                      <h3 className="font-display font-bold text-brand-navy text-lg mb-1">
-                        {detail.value}
-                      </h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">{detail.description}</p>
-                    </div>
-                  </div>
+            <div className="reveal lg:col-span-5" style={{ transitionDelay: '0.08s' }}>
+              <div className="border border-white/20 bg-white/10 backdrop-blur-sm p-5 shadow-[0_10px_26px_rgba(0,0,0,0.2)]">
+                <p className="text-[12px] uppercase tracking-[0.12em] font-bold text-[#fdb813] mb-3">Quick Access</p>
+                <div className="space-y-2.5">
+                  <a
+                    href="#reports"
+                    className="flex items-center justify-between gap-2 px-3 py-2 border border-white/20 bg-white/[0.05] text-white text-[13px] hover:bg-white/[0.1] transition-colors"
+                  >
+                    <span>Reports</span>
+                    <FolderOpen className="w-4 h-4 text-[#fdb813]" />
+                  </a>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Ranking Parameters */}
-      <section className="py-14 bg-gradient-to-r from-brand-dark via-brand-blue to-brand-navy">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-5xl mx-auto">
-            <div className="reveal text-center mb-10">
-              <h2 className="text-2xl font-display font-bold text-white mb-2">NIRF Ranking Parameters</h2>
-              <p className="text-white/60 text-sm">The five pillars of institutional evaluation</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {[
-                { icon: FileText, label: 'Teaching, Learning & Resources' },
-                { icon: TrendingUp, label: 'Research & Professional Practice' },
-                { icon: Award, label: 'Graduation Outcomes' },
-                { icon: BarChart3, label: 'Outreach & Inclusivity' },
-                { icon: TrendingUp, label: 'Perception' },
-              ].map((param, idx) => (
-                <div
-                  key={idx}
-                  className="reveal text-center p-4 bg-white/5 rounded-xl border border-white/10"
-                  style={{ transitionDelay: `${idx * 0.1}s` }}
-                >
-                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <param.icon className="w-5 h-5 text-brand-gold" />
-                  </div>
-                  <p className="text-xs text-white/80 font-medium leading-tight">{param.label}</p>
-                </div>
-              ))}
-            </div>
+      <section className="sticky top-[72px] z-20 bg-white/95 backdrop-blur-sm border-b border-[#E4EAF2]">
+        <div className="container mx-auto px-4 sm:px-6 max-w-[1200px] py-3">
+          <div className="flex flex-wrap gap-2.5">
+            {sectionTabs.map((tab) => (
+              <a
+                key={tab.label}
+                href={tab.href}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-none border border-[#D7E1EC] bg-[#F8FBFF] text-[#1A4B7C] text-[12px] font-bold uppercase tracking-[0.08em] hover:bg-[#1A4B7C] hover:text-white transition-colors"
+              >
+                {tab.label}
+              </a>
+            ))}
           </div>
+        </div>
+      </section>
+
+      <section id="reports" className="py-14 md:py-16 bg-[#F8FAFC] scroll-mt-28">
+        <div className="container mx-auto px-4 sm:px-6 max-w-[1200px]">
+          <div className="reveal mb-10">
+            <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#fdb813] border-b border-[#fdb813]/60 pb-1">Reports</span>
+            <h3 className="text-2xl md:text-3xl font-display font-bold text-[#56A9D8] mt-3 tracking-tight">Reports - Events and Committee Details :</h3>
+          </div>
+          <PdfGrid items={reportPdfs} />
         </div>
       </section>
     </PageLayout>

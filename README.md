@@ -13,11 +13,12 @@ You are free to redesign layouts, improve UI/UX, and add new features, but the i
 1. [Tech Stack](#tech-stack)
 2. [Repository Structure](#repository-structure)
 3. [Getting Started](#getting-started)
-4. [API Reference](#api-reference)
-5. [Database Schema](#database-schema)
+4. [API & Dynamic Data](#api--dynamic-data)
+5. [Admin Panel](#admin-panel)
 6. [Content Rules](#content-rules)
 7. [Contributing — Git Workflow](#contributing--git-workflow)
 8. [GitHub Rules and Engineering Standards](#github-rules-and-engineering-standards)
+9. [Contributors](#contributors)
 
 ---
 
@@ -29,9 +30,10 @@ You are free to redesign layouts, improve UI/UX, and add new features, but the i
 | Styling   | Tailwind CSS                            |
 | Routing   | React Router v7                         |
 | Animation | Framer Motion                           |
-| Backend   | PHP 8+ (Apache, shared hosting)         |
-| Database  | MySQL 5.7+ / MariaDB 10.3+              |
-| Hosting   | Bluehost Pro Shared (Apache + cPanel)   |
+| Backend   | Laravel 12, PHP 8.5 (REST JSON API)     |
+| Auth      | Laravel Sanctum (Bearer tokens)         |
+| Database  | SQLite (dev) / MySQL (production)       |
+| Hosting   | Bluehost (frontend) + separate API host |
 
 ---
 
@@ -50,6 +52,7 @@ vcet.edu.in/
 |
 |-- components/                # Reusable UI components (homepage sections + shared layout)
 |   |-- TopBanner.tsx          # Top bar with logos and contact
+|   |                          # (includes nav dropdown: Departments > MMS)
 |   |-- Header.tsx             # Navigation menu
 |   |-- Hero.tsx               # Hero / banner section
 |   |-- About.tsx              # About stats block
@@ -71,6 +74,12 @@ vcet.edu.in/
 |   |-- SplashScreen.tsx       # Initial splash/loader
 |   |-- DepartmentPage.tsx     # Generic department page template
 |   |-- Admissions.tsx         # Admissions info component
+|   |
+|   |-- mms/                   # ★ MMS-specific shared components
+|       |-- MMSLayout.tsx      # Wrapper for all MMS pages (MMS header + footer)
+|       |-- MMSHeader.tsx      # MMS internal nav bar with own menu & dropdown
+|       |-- MMSHero.tsx        # MMS hero image carousel
+|       |-- MMSEnquirePopup.tsx # Global "Enquire Now" floating button + modal
 |
 |-- pages/                     # All route-level page components (lazy loaded)
 |   |-- about/                 # Institute information
@@ -174,34 +183,114 @@ vcet.edu.in/
 |   |   |-- BestPractices.tsx
 |   |
 |   |-- contact/
-|       |-- ContactUs.tsx
+|   |   |-- ContactUs.tsx
+|   |
+|   |-- mms/                         # ★ MMS (MBA) mini-site — routes under /mms/*
+|       |-- MMSHome.tsx               # /mms — MMS landing page
+|       |
+|       |-- about/                    # /mms/about/*
+|       |   |-- MMSAbout.tsx          # /mms/about (tab: About)
+|       |   |-- MMSPrincipalsDesk.tsx # /mms/about/principals-desk
+|       |   |-- MMSHODsDesk.tsx       # /mms/about/hods-desk
+|       |   |-- MMSFaculty.tsx        # /mms/about/faculty
+|       |   |-- MMSVisionMission.tsx  # /mms/about/vision-mission
+|       |   |-- MMSDAB.tsx            # /mms/about/dab (Departmental Advisory Board)
+|       |   |-- MMSProgramOutcomes.tsx # /mms/about/program-outcomes
+|       |
+|       |-- admission/
+|       |   |-- MMSAdmission.tsx      # /mms/admission
+|       |
+|       |-- experiential-learning/
+|       |   |-- MMSExperientialLearning.tsx  # /mms/experiential-learning
+|       |                                    # tabs: Info, Role Play, Group Discussion,
+|       |                                    #       Entrepreneurial Drive, Financial
+|       |                                    #       Literacy Program, NESCO Bombay
+|       |                                    #       Exhibition Centre, 3D Model Making
+|       |
+|       |-- training-placement/
+|       |   |-- MMSTraining.tsx       # /mms/training-placement/training
+|       |   |                         # tabs: Training, Events, Career Guidance,
+|       |   |                         #       Internship, Gallery
+|       |   |-- MMSPlacement.tsx      # /mms/training-placement/placement
+|       |
+|       |-- students-life/
+|       |   |-- MMSStudentsLife.tsx   # /mms/students-life
+|       |                             # tabs: V-Ecstatic, DLLE, Book Review,
+|       |                             #       Add-on Courses (Power BI / Advance Excel),
+|       |                             #       Industry Expert Session, NSIM Training,
+|       |                             #       Oscillations, IDEATHON 1.0, Rankers
+|       |
+|       |-- facilities/
+|       |   |-- MMSFacilities.tsx     # /mms/facilities
+|       |                             # tabs: Computer Labs, Library, Seminar Hall,
+|       |                             #       Classroom, Gymkhana
+|       |
+|       |-- faqs/
+|           |-- MMSFAQs.tsx           # /mms/faqs (13 Q&A items)
 |
-|-- api/                       # PHP REST API (backend)
-|   |-- config/
-|   |   |-- config.php         # DB credentials and constants (never commit real values)
-|   |   |-- helpers.php        # Shared helpers: db(), json_ok(), json_error(), method()
-|   |-- auth/
-|   |   |-- login.php          # POST /api/auth/login
-|   |   |-- logout.php         # POST /api/auth/logout
-|   |-- events/
-|   |   |-- index.php          # GET  /api/events/
-|   |-- notices/
-|   |   |-- index.php          # GET  /api/notices/
-|   |-- placements/
-|       |-- index.php          # GET  /api/placements/
+|-- services/                  # Public API fetch functions (main website, no auth)
+|   |-- api.ts                 # Base fetch client — reads VITE_API_URL env var
+|   |-- heroSlides.ts          # GET /api/hero-slides
+|   |-- newsTicker.ts          # GET /api/news-ticker
+|   |-- notices.ts             # GET /api/notices
+|   |-- events.ts              # GET /api/events
+|   |-- achievements.ts        # GET /api/achievements
+|   |-- testimonials.ts        # GET /api/testimonials
+|   |-- gallery.ts             # GET /api/gallery
+|   |-- placements.ts          # GET /api/placements
+|   |-- placementPartners.ts   # GET /api/placement-partners
+|   |-- enquiries.ts           # POST /api/enquiries (admission form submit)
 |
-|-- admin/                     # PHP admin panel (cPanel-hosted, not part of React)
-|   |-- index.php              # Login page
-|   |-- dashboard.php          # Admin dashboard
-|   |-- events.php             # Manage events
-|   |-- events_form.php        # Add / edit event
-|   |-- notices.php            # Manage notices
-|   |-- notices_form.php       # Add / edit notice
-|   |-- placements.php         # Manage placements
-|   |-- placements_form.php    # Add / edit placement
-|   |-- logout.php
-|   |-- assets/                # Admin CSS and JS
-|   |-- includes/              # Shared admin partials (header, footer, auth, db)
+|-- hooks/                     # React data hooks wrapping services
+|   |-- useFetch.ts            # Generic { data, loading, error, refetch }
+|   |-- useHeroSlides.ts       # → components/Hero.tsx
+|   |-- useNewsTicker.ts       # → components/TopBanner.tsx
+|   |-- useNotices.ts          # → Notices page
+|   |-- useEvents.ts           # → Events page
+|   |-- useAchievements.ts     # → components/Achievements.tsx
+|   |-- useTestimonials.ts     # → components/Testimonials.tsx
+|   |-- useGallery.ts          # → components/Gallery.tsx
+|   |-- usePlacements.ts       # → components/Placements.tsx
+|   |-- usePlacementPartners.ts # → components/Recruiters.tsx
+|   |-- useEnquiryForm.ts      # → Admissions / contact form
+|
+|-- context/
+|   |-- SiteDataContext.tsx    # Preloads shared API data once at app mount
+|
+|-- admin/                     # React Admin Panel (routes under /admin/*)
+|   |-- types.ts               # Admin-specific TypeScript types
+|   |-- api/                   # Admin API modules (Bearer auth, full CRUD)
+|   |   |-- client.ts          # Authenticated fetch client
+|   |   |-- auth.ts            # POST /api/login, POST /api/logout
+|   |   |-- notices.ts         # CRUD /api/notices
+|   |   |-- events.ts          # CRUD /api/events
+|   |   |-- placements.ts      # CRUD /api/placements
+|   |   |-- heroSlides.ts      # CRUD /api/hero-slides
+|   |   |-- newsTicker.ts      # CRUD /api/news-ticker
+|   |   |-- achievements.ts    # CRUD /api/achievements
+|   |   |-- testimonials.ts    # CRUD /api/testimonials
+|   |   |-- gallery.ts         # Upload+delete /api/gallery
+|   |   |-- placementPartners.ts # CRUD /api/placement-partners
+|   |   |-- enquiries.ts       # GET /api/enquiries (read-only)
+|   |-- context/
+|   |   |-- AuthContext.tsx    # Auth state, login/logout, token persistence
+|   |-- components/
+|   |   |-- Sidebar.tsx        # Navigation with all 10 resource sections
+|   |   |-- ProtectedRoute.tsx # Redirect to login if not authed
+|   |   |-- AdminLayout.tsx    # Sidebar + main content wrapper
+|   |-- pages/
+|   |   |-- Login.tsx
+|   |   |-- Dashboard.tsx
+|   |   |-- notices/           NoticesList.tsx, NoticeForm.tsx
+|   |   |-- events/            EventsList.tsx, EventForm.tsx
+|   |   |-- placements/        PlacementsList.tsx, PlacementForm.tsx
+|   |   |-- hero-slides/       HeroSlidesList.tsx, HeroSlideForm.tsx
+|   |   |-- news-ticker/       NewsTickerList.tsx, NewsTickerForm.tsx
+|   |   |-- achievements/      AchievementsList.tsx, AchievementsForm.tsx
+|   |   |-- testimonials/      TestimonialsList.tsx, TestimonialsForm.tsx
+|   |   |-- gallery/           GalleryPage.tsx
+|   |   |-- placement-partners/ PlacementPartnersList.tsx, PlacementPartnersForm.tsx
+|   |   |-- enquiries/         EnquiriesList.tsx
 |
 |-- db/
 |   |-- schema.sql             # Full database schema — run once on setup
@@ -218,6 +307,15 @@ vcet.edu.in/
 |       |-- recriters/
 |       |-- Remarkable Acheivements/
 |       |-- testimonials/
+|       |
+|       |-- mms/               # ★ MMS-specific image assets
+|           |-- logo/          # VCETLOGO.png, VCET.BANNER.png
+|           |-- hero/          # Hero carousel images (gal1–gal5, _MG_0233, _MG_0244, _MG_0252)
+|           |-- internships/   # Summer internship company logos (l2, l7, logo1)
+|           |-- events/        # Events carousel images (e1, e2, e3)
+|           |-- about/         # About page images (img4.jpeg)
+|           |-- facilities/    # Facilities images (cl1, cl2, inf5)
+|           |-- syllabus/      # FY.pdf, SY_syllabus.pdf (downloadable syllabi)
 |
 |-- Images/                    # Source image assets (mirrored to public/Images/)
 |-- uploads/                   # Runtime file uploads from admin panel (not in Git)
@@ -258,96 +356,63 @@ Output goes to `dist/`. See [DEPLOYMENT.md](./DEPLOYMENT.md) for full hosting in
 
 ---
 
-## API Reference
+## API & Dynamic Data
 
-All API endpoints are read-only (GET) and public unless noted.
-The base URL in production is `https://vcet.edu.in/api`.
+The backend is a **separate Laravel 12 REST API** at [ivory-26/vcet](https://github.com/ivory-26/vcet).
+This frontend consumes it via `VITE_API_URL` — see `.env.example`.
 
----
+### Data flow
 
-### Authentication
-
-| Method | Endpoint           | Auth required | Description                        |
-|--------|--------------------|---------------|------------------------------------|
-| POST   | `/api/auth/login`  | No            | Admin login — returns session cookie |
-| POST   | `/api/auth/logout` | Yes (session) | Destroys admin session             |
-
-**POST /api/auth/login — Request body**
-
-```json
-{
-  "username": "admin",
-  "password": "yourpassword"
-}
+```
+Backend (Laravel) → services/ → hooks/ → components/
 ```
 
-**Response**
+| Layer | Folder | Role |
+|-------|--------|------|
+| API functions | `services/` | Raw fetch calls, no React state |
+| React hooks | `hooks/` | Wrap services with `loading`, `error`, `data` |
+| Shared context | `context/SiteDataContext.tsx` | Fetch once at app mount for data used by multiple components |
+| Admin CRUD | `admin/api/` | Authenticated (Bearer token), full CRUD |
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "id": 1,
-    "username": "admin",
-    "full_name": "Administrator",
-    "role": "super"
-  }
-}
-```
+### Public endpoints (main website reads)
 
----
+| Endpoint | Hook | Component |
+|----------|------|-----------|
+| `GET /api/hero-slides` | `useHeroSlides` | `Hero.tsx` |
+| `GET /api/news-ticker` | `useNewsTicker` | `TopBanner.tsx` |
+| `GET /api/notices` | `useNotices` | Notices page |
+| `GET /api/events` | `useEvents` | Events page |
+| `GET /api/achievements` | `useAchievements` | `Achievements.tsx` |
+| `GET /api/testimonials` | `useTestimonials` | `Testimonials.tsx` |
+| `GET /api/gallery` | `useGallery` | `Gallery.tsx` |
+| `GET /api/placements` | `usePlacements` | `Placements.tsx` |
+| `GET /api/placement-partners` | `usePlacementPartners` | `Recruiters.tsx` |
+| `POST /api/enquiries` | `useEnquiryForm` | Admissions / contact form |
 
-### Events
-
-| Method | Endpoint                         | Description                          |
-|--------|----------------------------------|--------------------------------------|
-| GET    | `/api/events/`                   | All active events                    |
-| GET    | `/api/events/?id=N`              | Single event by ID                   |
-| GET    | `/api/events/?upcoming=1`        | Only future events (event_date >= today) |
-
-**Response fields:** `id`, `title`, `description`, `event_date`, `event_time`, `venue`, `image`, `category`, `is_featured`, `sort_order`, `created_at`
+See [wiki/API-Endpoint-Map.md](./wiki/API-Endpoint-Map.md) for the full 38-endpoint reference including all admin CRUD routes.
 
 ---
 
-### Notices
+## Admin Panel
 
-| Method | Endpoint                | Description              |
-|--------|-------------------------|--------------------------|
-| GET    | `/api/notices/`         | All active notices        |
-| GET    | `/api/notices/?id=N`    | Single notice by ID       |
+The admin panel lives at `/admin/login` and manages all dynamic content.
+It uses **Sanctum Bearer token auth** — credentials are managed in the backend repo.
 
-**Response fields:** `id`, `title`, `description`, `attachment`, `link_url`, `is_new`, `sort_order`, `created_at`
+| Section | Route | Resources managed |
+|---------|-------|------------------|
+| Dashboard | `/admin` | Overview counts |
+| Notices | `/admin/notices` | Homepage notices |
+| Events | `/admin/events` | College events |
+| Hero Slides | `/admin/hero-slides` | Homepage banner slides |
+| News Ticker | `/admin/news-ticker` | Top scrolling ticker |
+| Achievements | `/admin/achievements` | Stat cards |
+| Testimonials | `/admin/testimonials` | Student quotes |
+| Gallery | `/admin/gallery` | Photo grid |
+| Placements | `/admin/placements` | Placement records |
+| Partners | `/admin/placement-partners` | Recruiter logos |
+| Enquiries | `/admin/enquiries` | Admission enquiries (read-only) |
 
----
-
-### Placements
-
-| Method | Endpoint                            | Description                       |
-|--------|-------------------------------------|-----------------------------------|
-| GET    | `/api/placements/`                  | All active placement records      |
-| GET    | `/api/placements/?year=2024`        | Filter by batch year              |
-| GET    | `/api/placements/?featured=1`       | Featured placements only          |
-
-**Response fields:** `id`, `student_name`, `department`, `company_name`, `package_lpa`, `role_title`, `batch_year`, `student_photo`, `company_logo`, `is_featured`, `sort_order`, `created_at`
-
----
-
-### Standard API response envelope
-
-All endpoints return JSON in this shape:
-
-```json
-{ "status": "ok",    "data": { ... } }
-{ "status": "error", "message": "...", "code": 404 }
-```
-
----
-
-## Database Schema
-
-Four tables — `admin_users`, `notices`, `events`, `placements`.
-The full DDL is in [`db/schema.sql`](./db/schema.sql).
-Run it once via phpMyAdmin during initial setup. Never modify the schema in production without coordinating with the team lead.
+See [wiki/Admin-Panel-Guide.md](./wiki/Admin-Panel-Guide.md) for full usage instructions.
 
 ---
 
@@ -365,10 +430,10 @@ These rules are non-negotiable for every contributor.
 3. **New features are welcome but must be relevant.**
    Additions like a live event ticker, a placement graph, a course comparison tool, or a campus map are accepted. Features that are off-brand, unrelated to a college website, or that compromise performance without clear benefit will be rejected in review.
 
-4. **Do not rewrite or modify any PHP API file** (`api/` directory) without explicit written permission from the project lead. The API is consumed by the admin panel and the frontend simultaneously. Breaking changes here affect production data.
+4. **Do not modify `admin/api/` or `services/` without coordinating** with the team lead. These modules define the contract with the backend. Breaking changes here can affect live data.
 
 5. **Never commit credentials.**
-   `api/config/config.php` contains database credentials. The file exists in the repo as a template with placeholder values only. Your real credentials must never be committed. If you accidentally commit credentials, notify the project lead immediately.
+   `.env.local` contains your `VITE_API_URL` and any secrets. This file is in `.gitignore`. Never commit it. If you accidentally push credentials, notify the project lead immediately.
 
 6. **Image assets go into `public/Images/`.**
    Any new images you add must be placed in the correct subfolder under `public/Images/`. Do not use external image URLs for content that should be hosted locally.
@@ -499,4 +564,27 @@ git push origin v1.0.0
 ### 12. The Git log is documentation
 
 Your commit history tells the story of this project. Write commit messages as if the person reading them has no context. A message like `fix stuff` is useless six months later. A message like `fix(hero): remove duplicate IntersectionObserver on remount` tells exactly what broke and where.
+
+---
+
+## Contributors
+
+This project is built by an amazing team of developers committed to creating a website for VCET. Special thanks to:
+
+| # | Contributor | GitHub |
+|---|-------------|--------|
+| 1 | **frag2win** | [@frag2win](https://github.com/frag2win) |
+| 2 | **Sahil2802-coder** | [@Sahil2802-coder](https://github.com/Sahil2802-coder) |
+| 3 | **yashhh-23** | [@yashhh-23](https://github.com/yashhh-23) |
+| 4 | **RedRex101** | [@RedRex101](https://github.com/RedRex101) |
+| 5 | **ivory-26** | [@ivory-26](https://github.com/ivory-26) |
+| 6 | **sawantshreya008** | [@sawantshreya008](https://github.com/sawantshreya008) |
+| 7 | **sumritasawant101-droid** | [@sumritasawant101-droid](https://github.com/sumritasawant101-droid) |
+| 8 | **dakshata2405956201-svg** | [@dakshata2405956201-svg](https://github.com/dakshata2405956201-svg) |
+| 9 | **shweta1909patil-maker** | [@shweta1909patil-maker](https://github.com/shweta1909patil-maker) |
+| 10 | **Sumitc0de** | [@Sumitc0de](https://github.com/Sumitc0de) |
+
+### How to contribute
+
+If you would like to contribute to this project, please follow the guidelines outlined in the [Contributing — Git Workflow](#contributing--git-workflow) and [GitHub Rules and Engineering Standards](#github-rules-and-engineering-standards) sections above. We welcome bug reports, feature suggestions, and pull requests from the community.
 
